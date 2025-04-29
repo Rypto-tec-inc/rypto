@@ -1,0 +1,388 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 0 0% 45%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 0 0% 45%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 65%;
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 0 0% 25%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground cursor-none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply tracking-tight;
+  }
+
+  section {
+    @apply scroll-mt-16;
+  }
+}
+
+/* Container with consistent padding */
+.container {
+  @apply px-8;
+}
+
+/* Section container with consistent padding */
+.section-container {
+  @apply container mx-auto py-16 md:py-24 px-8;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Pencil style text */
+.pencil-text {
+  font-family: "Caveat", cursive;
+  letter-spacing: 0.5px;
+}
+
+/* Monochromatic filter for images */
+.mono-filter {
+  filter: grayscale(100%);
+}
+
+/* Tour guide highlight */
+.tour-highlight {
+  position: relative;
+  z-index: 45;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Futuristic glow effect (changed from green to gray) */
+.futuristic-glow {
+  text-shadow: 0 0 5px rgba(163, 163, 163, 0.7), 0 0 10px rgba(163, 163, 163, 0.5);
+}
+
+.futuristic-border {
+  box-shadow: 0 0 5px rgba(163, 163, 163, 0.7), 0 0 10px rgba(163, 163, 163, 0.5);
+  border: 1px solid rgba(163, 163, 163, 0.7);
+}
+
+/* Add these new animation keyframes after the existing ones */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Add these new animation classes after the existing ones */
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
+/* Add these new utility classes */
+.section-padding {
+  @apply py-16 md:py-24;
+}
+
+.section-padding-sm {
+  @apply py-8 md:py-12;
+}
+
+.section-padding-lg {
+  @apply py-24 md:py-32;
+}
+
+/* Add these title classes */
+.section-title {
+  @apply text-3xl md:text-4xl font-bold mb-4;
+}
+
+.section-subtitle {
+  @apply text-sm text-muted-foreground mb-2;
+}
+
+.section-description {
+  @apply text-muted-foreground max-w-2xl mx-auto;
+}
+
+/* Add these card styles */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+.card-padding {
+  @apply p-6;
+}
+
+/* Add these button styles (changed from green to gray) */
+.btn-primary {
+  @apply px-6 py-3 rounded-md bg-gray-500 text-white hover:bg-gray-400 transition-colors;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 rounded-md border hover:bg-muted transition-colors;
+}
+
+.btn-outline {
+  @apply px-6 py-3 rounded-md border border-foreground/20 hover:bg-accent transition-colors;
+}
+
+/* Add these for accessibility */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+.focus-visible {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+}
+
+/* Heading styles */
+.heading-xl {
+  @apply text-4xl md:text-5xl lg:text-6xl font-bold;
+}
+
+.heading-lg {
+  @apply text-3xl md:text-4xl font-bold;
+}
+
+.heading-md {
+  @apply text-2xl md:text-3xl font-bold;
+}
+
+.heading-sm {
+  @apply text-xl md:text-2xl font-bold;
+}
+
+/* Partners section */
+.partners-container {
+  @apply w-full overflow-hidden;
+}
+
+.partners-track {
+  @apply py-4;
+}
+
+/* Gallery item */
+.gallery-item {
+  @apply aspect-square relative overflow-hidden rounded-lg;
+}
+
+/* Hero section styles */
+.hero-section {
+  @apply relative min-h-screen flex items-center overflow-hidden;
+}
+
+.hero-video {
+  @apply absolute inset-0 w-full h-full object-cover z-0;
+}
+
+.hero-overlay {
+  @apply absolute inset-0 bg-black/60 z-10;
+}
+
+.hero-content {
+  @apply relative z-20 container mx-auto px-8;
+}
+
+/* Custom cursor */
+.cursor-dot {
+  position: fixed;
+  width: 1rem;
+  height: 1rem;
+  background-color: #737373; /* gray-500 */
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid #a3a3a3; /* gray-400 */
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+}
+
+/* Interactive elements */
+.interactive-element {
+  @apply transition-all duration-300 hover:scale-105;
+}
+
+/* Parallax effect */
+.parallax {
+  @apply relative overflow-hidden;
+}
+
+.parallax-layer {
+  @apply absolute inset-0 w-full h-full;
+}
+
+/* 3D card effect */
+.card-3d {
+  @apply transition-transform duration-300 transform-gpu;
+}
+
+.card-3d:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+}
+
+/* Tab bar for mobile */
+@media (max-width: 768px) {
+  .mobile-tab-bar {
+    @apply fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t z-50;
+  }
+
+  .mobile-tab-content {
+    @apply flex justify-around items-center py-2;
+  }
+
+  .mobile-tab-item {
+    @apply flex flex-col items-center p-2;
+  }
+}
