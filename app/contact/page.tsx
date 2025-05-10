@@ -3,20 +3,26 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Mail, MapPin, Send, Facebook } from "lucide-react"
+import { motion } from "framer-motion"
+import { Mail, MapPin, Phone } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ContactPage() {
+  const { toast } = useToast()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     message: "",
   })
-
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<null | "success" | "error">(null)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
@@ -26,217 +32,215 @@ export default function ContactPage() {
     setIsSubmitting(true)
 
     // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmitStatus("success")
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      })
+    await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      // Reset status after 5 seconds
-      setTimeout(() => {
-        setSubmitStatus(null)
-      }, 5000)
-    }, 1500)
+    toast({
+      title: "Message sent!",
+      description: "We'll get back to you as soon as possible.",
+    })
+
+    setFormData({
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    })
+    setIsSubmitting(false)
   }
 
   return (
-    <>
-      {/* Hero Section */}
-      <section className="bg-secondary">
-        <div className="section-container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="heading-xl mb-6">Contact Us</h1>
-            <p className="text-lg text-muted-foreground">
-              Have a question or want to work with us? Reach out and we'll get back to you as soon as possible.
-            </p>
-          </div>
+    <div className="container px-4 py-12 md:px-6 md:py-24">
+      <div className="mx-auto max-w-5xl space-y-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-4 text-center"
+        >
+          <h1 className="text-4xl font-bold tracking-tight md:text-5xl" title="Contact Us">
+            Contact Us
+          </h1>
+          <p className="mx-auto max-w-[700px] text-xl text-muted-foreground">
+            Get in touch with our team to discuss your project or inquire about our services.
+          </p>
+        </motion.div>
+
+        <div className="grid gap-8 md:grid-cols-3">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg" title="Email Us">
+                    Email Us
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">For general inquiries and information:</CardDescription>
+                <a
+                  href="mailto:info@ryptotec.com"
+                  className="mt-2 block font-medium text-foreground hover:underline"
+                  title="Send us an email"
+                >
+                  info@ryptotec.com
+                </a>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg" title="Call Us">
+                    Call Us
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">For immediate assistance:</CardDescription>
+                <a
+                  href="tel:+1234567890"
+                  className="mt-2 block font-medium text-foreground hover:underline"
+                  title="Call our office"
+                >
+                  +1 (234) 567-890
+                </a>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg" title="Visit Us">
+                    Visit Us
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">Our headquarters:</CardDescription>
+                <address className="mt-2 not-italic font-medium text-foreground">
+                  123 Tech Avenue
+                  <br />
+                  Innovation District
+                  <br />
+                  San Francisco, CA 94103
+                </address>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </section>
 
-      {/* Contact Form & Info */}
-      <section>
-        <div className="section-container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Information */}
-            <div>
-              <h2 className="heading-md mb-6">Get in Touch</h2>
-              <p className="text-muted-foreground mb-8">
-                We're always looking for new opportunities and partnerships. Feel free to contact us with any questions
-                or inquiries.
-              </p>
-
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-md bg-primary/10">
-                    <Mail className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold mb-1">Email</h3>
-                    <p className="text-muted-foreground mb-1">General Inquiries:</p>
-                    <a href="mailto:rypto2099@gmail.com" className="hover:text-primary transition-colors">
-                      rypto2099@gmail.com
-                    </a>
-                    <p className="text-muted-foreground mt-2 mb-1">Founder:</p>
-                    <a href="mailto:colemanvictor25@gmail.com" className="hover:text-primary transition-colors">
-                      colemanvictor25@gmail.com
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-md bg-primary/10">
-                    <Facebook className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold mb-1">Social Media</h3>
-                    <p className="text-muted-foreground mb-1">Facebook:</p>
-                    <a
-                      href="https://facebook.com/RYPTO"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-primary transition-colors"
-                    >
-                      RYPTO
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-md bg-primary/10">
-                    <MapPin className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold mb-1">Location</h3>
-                    <p className="text-muted-foreground">Monrovia, Liberia</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle title="Send Us a Message">Send Us a Message</CardTitle>
+              <CardDescription>Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
+            </CardHeader>
+            <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-2">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" title="Your name">
                       Name
-                    </label>
-                    <input
-                      type="text"
+                    </Label>
+                    <Input
                       id="name"
                       name="name"
+                      placeholder="Your name"
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" title="Your email">
                       Email
-                    </label>
-                    <input
-                      type="email"
+                    </Label>
+                    <Input
                       id="email"
                       name="email"
+                      type="email"
+                      placeholder="Your email"
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                <div className="space-y-2">
+                  <Label htmlFor="subject" title="Message subject">
                     Subject
-                  </label>
-                  <select
+                  </Label>
+                  <Input
                     id="subject"
                     name="subject"
+                    placeholder="Subject of your message"
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="General Inquiry">General Inquiry</option>
-                    <option value="Project Proposal">Project Proposal</option>
-                    <option value="Partnership">Partnership</option>
-                    <option value="Career">Career Opportunity</option>
-                    <option value="Other">Other</option>
-                  </select>
+                  />
                 </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">
+                <div className="space-y-2">
+                  <Label htmlFor="message" title="Your message">
                     Message
-                  </label>
-                  <textarea
+                  </Label>
+                  <Textarea
                     id="message"
                     name="message"
+                    placeholder="Your message"
+                    rows={5}
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    rows={6}
-                    className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  ></textarea>
+                  />
                 </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-70"
-                >
-                  {isSubmitting ? (
-                    <>Processing...</>
-                  ) : (
-                    <>
-                      Send Message
-                      <Send className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
-
-                {submitStatus === "success" && (
-                  <div className="p-4 rounded-md bg-green-500/10 text-green-500 border border-green-500/20">
-                    Your message has been sent successfully. We'll get back to you soon!
-                  </div>
-                )}
-
-                {submitStatus === "error" && (
-                  <div className="p-4 rounded-md bg-red-500/10 text-red-500 border border-red-500/20">
-                    There was an error sending your message. Please try again later.
-                  </div>
-                )}
+                <Button type="submit" className="w-full" disabled={isSubmitting} title="Send your message">
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </Button>
               </form>
-            </div>
-          </div>
-        </div>
-      </section>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-      {/* Map Section */}
-      <section className="bg-secondary mt-16">
-        <div className="section-container">
-          <div className="text-center mb-12">
-            <h2 className="heading-md mb-4">Our Location</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Based in Monrovia, Liberia, with a focus on serving the African continent
-            </p>
-          </div>
-
-          <div className="h-[400px] bg-card rounded-lg border flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-2xl font-bold mb-2">Monrovia, Liberia</p>
-              <p className="text-muted-foreground">Map placeholder - Exact location coming soon</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="aspect-video w-full overflow-hidden rounded-lg"
+        >
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100939.98555098464!2d-122.50764017948553!3d37.75781499657369!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1620756370946!5m2!1sen!2sus"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            title="Our location"
+          ></iframe>
+        </motion.div>
+      </div>
+    </div>
   )
 }

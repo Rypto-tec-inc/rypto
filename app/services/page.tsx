@@ -1,260 +1,164 @@
-import { ArrowRight, Code, Layers, Cpu, Smartphone, Braces, Headset } from "lucide-react"
+"use client"
+
+import { useRef } from "react"
 import Link from "next/link"
+import { motion, useInView } from "framer-motion"
+import { ArrowRight, Code, Cpu, Layers, Smartphone, Video, Zap } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function ServicesPage() {
+  const ref1 = useRef(null)
+  const ref2 = useRef(null)
+  const isInView1 = useInView(ref1, { once: true, margin: "-100px" })
+  const isInView2 = useInView(ref2, { once: true, margin: "-100px" })
+
+  const services = [
+    {
+      icon: <Code className="h-10 w-10" />,
+      title: "Frontend Development",
+      description:
+        "We create responsive, user-friendly interfaces using Next.js, React, Tailwind CSS, and Vite. Our frontend solutions are optimized for performance and accessibility.",
+      features: [
+        "Responsive web applications",
+        "Progressive web apps (PWAs)",
+        "Interactive user interfaces",
+        "Performance optimization",
+      ],
+    },
+    {
+      icon: <Cpu className="h-10 w-10" />,
+      title: "Backend Development",
+      description:
+        "Our backend solutions are built with Node.js, Express, and MongoDB, providing robust and scalable server-side applications that power your digital products.",
+      features: [
+        "API development",
+        "Database design and optimization",
+        "Authentication systems",
+        "Serverless functions",
+      ],
+    },
+    {
+      icon: <Layers className="h-10 w-10" />,
+      title: "3D and Animation",
+      description:
+        "We create immersive digital experiences using Blender, Three.js, and other advanced tools, bringing your ideas to life with stunning visuals and animations.",
+      features: [
+        "3D modeling and rendering",
+        "Character animation",
+        "Motion graphics",
+        "Interactive 3D web experiences",
+      ],
+    },
+    {
+      icon: <Zap className="h-10 w-10" />,
+      title: "VR/AR Technologies",
+      description:
+        "We deliver next-level immersive experiences using Unity, A-Frame, and WebXR, pushing the boundaries of what's possible with virtual and augmented reality.",
+      features: [
+        "Virtual reality applications",
+        "Augmented reality experiences",
+        "Interactive 360° environments",
+        "WebXR development",
+      ],
+    },
+    {
+      icon: <Smartphone className="h-10 w-10" />,
+      title: "Mobile App Development",
+      description:
+        "We build native and cross-platform mobile applications that provide seamless experiences across iOS and Android devices, focusing on performance and usability.",
+      features: [
+        "iOS and Android development",
+        "React Native applications",
+        "App Store optimization",
+        "Mobile UI/UX design",
+      ],
+    },
+    {
+      icon: <Video className="h-10 w-10" />,
+      title: "Video Production",
+      description:
+        "From concept to final delivery, we create high-quality video content including product demos, explainer videos, and promotional content for your brand.",
+      features: ["Promotional videos", "Product demonstrations", "Explainer animations", "Corporate presentations"],
+    },
+  ]
+
   return (
-    <>
-      {/* Hero Section */}
-      <section className="bg-secondary">
-        <div className="section-container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="heading-xl mb-6">Our Services</h1>
-            <p className="text-lg text-muted-foreground">
-              We specialize in cutting-edge technologies to create innovative solutions tailored for the African
-              ecosystem.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Services List */}
-      <section>
-        <div className="section-container">
-          <div className="space-y-24">
-            {/* Service 1 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="p-3 rounded-md bg-primary/10 w-fit mb-4">
-                  <Code className="h-8 w-8" />
-                </div>
-                <h2 className="heading-lg mb-4">Software Engineering</h2>
-                <p className="text-lg mb-6">
-                  We build robust, scalable software solutions for web, mobile, and desktop platforms.
-                </p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">Full-stack Web Development</h4>
-                      <p className="text-muted-foreground">Modern, responsive web applications</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">Mobile App Development</h4>
-                      <p className="text-muted-foreground">Native and cross-platform mobile applications</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">Desktop Applications</h4>
-                      <p className="text-muted-foreground">High-performance desktop software</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-secondary rounded-lg p-8 h-[400px] flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-6xl font-bold mb-4">{"</>"}</p>
-                  <p className="text-muted-foreground">Custom Software Solutions</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Service 2 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1 bg-secondary rounded-lg p-8 h-[400px] flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-6xl font-bold mb-4">VR</p>
-                  <p className="text-muted-foreground">Immersive Experiences</p>
-                </div>
-              </div>
-              <div className="order-1 lg:order-2">
-                <div className="p-3 rounded-md bg-primary/10 w-fit mb-4">
-                  <Headset className="h-8 w-8" />
-                </div>
-                <h2 className="heading-lg mb-4">Virtual & Augmented Reality</h2>
-                <p className="text-lg mb-6">
-                  We create immersive VR and AR experiences that transform how users interact with digital content.
-                </p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">VR Applications</h4>
-                      <p className="text-muted-foreground">Fully immersive virtual reality experiences</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">AR Solutions</h4>
-                      <p className="text-muted-foreground">Augmented reality for mobile and wearable devices</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">360° Virtual Tours</h4>
-                      <p className="text-muted-foreground">Interactive panoramic experiences</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Service 3 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="p-3 rounded-md bg-primary/10 w-fit mb-4">
-                  <Cpu className="h-8 w-8" />
-                </div>
-                <h2 className="heading-lg mb-4">AI-powered Tools</h2>
-                <p className="text-lg mb-6">
-                  We develop intelligent systems and chatbots that leverage artificial intelligence to solve complex
-                  problems.
-                </p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">Chatbots & Virtual Assistants</h4>
-                      <p className="text-muted-foreground">Intelligent conversational interfaces</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">Natural Language Processing</h4>
-                      <p className="text-muted-foreground">Support for African languages and dialects</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 rounded-full bg-primary/20 text-primary mt-1">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold">Predictive Analytics</h4>
-                      <p className="text-muted-foreground">Data-driven insights and forecasting</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-secondary rounded-lg p-8 h-[400px] flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-6xl font-bold mb-4">AI</p>
-                  <p className="text-muted-foreground">Intelligent Solutions</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Additional Services */}
-            <div>
-              <h2 className="heading-lg text-center mb-12">Additional Services</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="p-6 rounded-lg border bg-card">
-                  <div className="p-3 rounded-md bg-primary/10 w-fit mb-4">
-                    <Smartphone className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Game Development</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Interactive games and simulations for education, entertainment, and training.
-                  </p>
-                </div>
-                <div className="p-6 rounded-lg border bg-card">
-                  <div className="p-3 rounded-md bg-primary/10 w-fit mb-4">
-                    <Layers className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Architectural Visualization</h3>
-                  <p className="text-muted-foreground mb-4">
-                    3D modeling and visualization services for architectural and urban planning projects.
-                  </p>
-                </div>
-                <div className="p-6 rounded-lg border bg-card">
-                  <div className="p-3 rounded-md bg-primary/10 w-fit mb-4">
-                    <Braces className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Cybersecurity</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Security solutions and ethical hacking services to protect digital assets.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Industries Section */}
-      <section className="bg-secondary">
-        <div className="section-container">
-          <div className="text-center mb-16">
-            <h2 className="heading-lg mb-4">Industries We Serve</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our solutions are tailored for various sectors across Africa
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {[
-              "Education",
-              "Healthcare",
-              "Finance",
-              "Agriculture",
-              "Tourism",
-              "Retail",
-              "Government",
-              "Manufacturing",
-              "Energy",
-              "Transportation",
-              "Media",
-              "Real Estate",
-            ].map((industry, index) => (
-              <div
-                key={index}
-                className="p-4 rounded-lg border bg-card text-center hover:border-primary transition-colors"
-              >
-                <p className="font-medium">{industry}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-primary text-primary-foreground">
-        <div className="section-container text-center">
-          <h2 className="heading-lg mb-6">Ready to start your project?</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
-            Contact us to discuss how we can help bring your ideas to life.
+    <div className="container px-4 py-12 md:px-6 md:py-24">
+      <div className="mx-auto max-w-5xl space-y-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-4 text-center"
+        >
+          <h1 className="text-4xl font-bold tracking-tight md:text-5xl" title="Our Services">
+            Our Services
+          </h1>
+          <p className="mx-auto max-w-[700px] text-xl text-muted-foreground">
+            We offer a comprehensive range of technology services to help transform your ideas into impactful solutions.
           </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-md bg-background text-foreground hover:bg-background/90 transition-colors"
-          >
-            Get in Touch
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+        </motion.div>
+
+        <div ref={ref1} className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((service, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView1 ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.1 * index }}
+            >
+              <Card className="h-full flex flex-col">
+                <CardHeader>
+                  <div className="mb-2 text-primary">{service.icon}</div>
+                  <CardTitle title={service.title}>{service.title}</CardTitle>
+                  <CardDescription>{service.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <ul className="space-y-2">
+                    {service.features.map((feature, i) => (
+                      <li key={i} className="flex items-start">
+                        <ArrowRight className="mr-2 h-4 w-4 mt-1 text-primary shrink-0" />
+                        <span title={feature}>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/contact" title={`Learn more about ${service.title}`}>
+                      Learn More
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
         </div>
-      </section>
-    </>
+
+        <motion.div
+          ref={ref2}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView2 ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="rounded-lg bg-muted p-8 text-center"
+        >
+          <h2 className="text-2xl font-bold" title="Ready to start your project?">
+            Ready to start your project?
+          </h2>
+          <p className="mx-auto mt-2 max-w-[600px] text-muted-foreground">
+            Contact us today to discuss how we can help bring your ideas to life with our expertise in software
+            engineering, animation, and emerging technologies.
+          </p>
+          <Button className="mt-6" size="lg" asChild>
+            <Link href="/contact" title="Get in touch with us">
+              Get in Touch
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </motion.div>
+      </div>
+    </div>
   )
 }

@@ -5,64 +5,47 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
-
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 10%;
-
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-
-    --primary: 0 0% 45%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 10%;
-
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 45%;
-
-    --accent: 0 0% 90%;
-    --accent-foreground: 0 0% 10%;
-
-    --destructive: 0 84% 60%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 89%;
-    --input: 0 0% 89%;
-    --ring: 0 0% 45%;
-
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 10%;
+    --background: 0 0% 12.5%; /* #202020 */
     --foreground: 0 0% 98%;
-
     --card: 0 0% 15%;
     --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 15%;
+    --popover: 0 0% 12.5%;
     --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 65%;
-    --primary-foreground: 0 0% 10%;
-
-    --secondary: 0 0% 15%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 65%;
-
-    --accent: 0 0% 25%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62% 30%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 65%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
@@ -71,318 +54,177 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground cursor-none;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply tracking-tight;
-  }
-
-  section {
-    @apply scroll-mt-16;
+    @apply bg-background text-foreground;
   }
 }
 
-/* Container with consistent padding */
-.container {
-  @apply px-8;
+.animate-in {
+  animation: animateIn 0.5s ease-in-out;
 }
 
-/* Section container with consistent padding */
-.section-container {
-  @apply container mx-auto py-16 md:py-24 px-8;
+@keyframes animateIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
+.section-number {
+  font-size: 8rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.9;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.hide-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 
-/* Pencil style text */
-.pencil-text {
-  font-family: "Caveat", cursive;
-  letter-spacing: 0.5px;
-}
-
-/* Monochromatic filter for images */
-.mono-filter {
-  filter: grayscale(100%);
-}
-
-/* Tour guide highlight */
-.tour-highlight {
+/* Code Animation Styles */
+.code-animation-container {
   position: relative;
-  z-index: 45;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 0 0 8px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  overflow: hidden;
 }
 
-/* Futuristic glow effect (changed from green to gray) */
-.futuristic-glow {
-  text-shadow: 0 0 5px rgba(163, 163, 163, 0.7), 0 0 10px rgba(163, 163, 163, 0.5);
+.code-editor {
+  width: 100%;
+  height: 100%;
 }
 
-.futuristic-border {
-  box-shadow: 0 0 5px rgba(163, 163, 163, 0.7), 0 0 10px rgba(163, 163, 163, 0.5);
-  border: 1px solid rgba(163, 163, 163, 0.7);
+/* Computer Animation Styles */
+.computer-animation-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
 }
 
-/* Add these new animation keyframes after the existing ones */
+/* Prevent selection for screenshot prevention */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Popup animation */
+.popup-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.popup-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.popup-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.popup-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Network Animation */
+.network-animation {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.network-node {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: pulse 3s infinite;
+}
+
 @keyframes pulse {
-  0%,
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(2);
+    opacity: 0.7;
+  }
   100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
+
+/* Pipeline Animation */
+.pipeline-animation {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pipeline-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+  transform: translateY(-50%);
+}
+
+.pipeline-node {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: hsl(var(--primary));
+  border-radius: 50%;
+  transform: translateY(-50%);
+  animation: moveNode 4s infinite;
+}
+
+@keyframes moveNode {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  10% {
     opacity: 1;
   }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+  90% {
+    opacity: 1;
   }
   100% {
-    transform: rotate(360deg);
+    left: 100%;
+    opacity: 0;
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-/* Add these new animation classes after the existing ones */
-.animate-pulse-slow {
-  animation: pulse 3s ease-in-out infinite;
-}
-
-.animate-bounce-slow {
-  animation: bounce 2s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin 8s linear infinite;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-marquee {
-  animation: marquee 30s linear infinite;
-}
-
-.animate-shimmer {
-  animation: shimmer 2s linear infinite;
-}
-
-/* Add these new utility classes */
-.section-padding {
-  @apply py-16 md:py-24;
-}
-
-.section-padding-sm {
-  @apply py-8 md:py-12;
-}
-
-.section-padding-lg {
-  @apply py-24 md:py-32;
-}
-
-/* Add these title classes */
-.section-title {
-  @apply text-3xl md:text-4xl font-bold mb-4;
-}
-
-.section-subtitle {
-  @apply text-sm text-muted-foreground mb-2;
-}
-
-.section-description {
-  @apply text-muted-foreground max-w-2xl mx-auto;
-}
-
-/* Add these card styles */
-.card-hover {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-}
-
-.card-padding {
-  @apply p-6;
-}
-
-/* Add these button styles (changed from green to gray) */
-.btn-primary {
-  @apply px-6 py-3 rounded-md bg-gray-500 text-white hover:bg-gray-400 transition-colors;
-}
-
-.btn-secondary {
-  @apply px-6 py-3 rounded-md border hover:bg-muted transition-colors;
-}
-
-.btn-outline {
-  @apply px-6 py-3 rounded-md border border-foreground/20 hover:bg-accent transition-colors;
-}
-
-/* Add these for accessibility */
-.sr-only {
-  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
-}
-
-.focus-visible {
-  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-}
-
-/* Heading styles */
-.heading-xl {
-  @apply text-4xl md:text-5xl lg:text-6xl font-bold;
-}
-
-.heading-lg {
-  @apply text-3xl md:text-4xl font-bold;
-}
-
-.heading-md {
-  @apply text-2xl md:text-3xl font-bold;
-}
-
-.heading-sm {
-  @apply text-xl md:text-2xl font-bold;
-}
-
-/* Partners section */
-.partners-container {
-  @apply w-full overflow-hidden;
-}
-
-.partners-track {
-  @apply py-4;
-}
-
-/* Gallery item */
-.gallery-item {
-  @apply aspect-square relative overflow-hidden rounded-lg;
-}
-
-/* Hero section styles */
-.hero-section {
-  @apply relative min-h-screen flex items-center overflow-hidden;
-}
-
-.hero-video {
-  @apply absolute inset-0 w-full h-full object-cover z-0;
-}
-
-.hero-overlay {
-  @apply absolute inset-0 bg-black/60 z-10;
-}
-
-.hero-content {
-  @apply relative z-20 container mx-auto px-8;
-}
-
-/* Custom cursor */
-.cursor-dot {
-  position: fixed;
-  width: 1rem;
-  height: 1rem;
-  background-color: #737373; /* gray-500 */
-  border-radius: 9999px;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
-}
-
-.cursor-ring {
-  position: fixed;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 2px solid #a3a3a3; /* gray-400 */
-  border-radius: 9999px;
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-}
-
-/* Interactive elements */
-.interactive-element {
-  @apply transition-all duration-300 hover:scale-105;
-}
-
-/* Parallax effect */
-.parallax {
-  @apply relative overflow-hidden;
-}
-
-.parallax-layer {
-  @apply absolute inset-0 w-full h-full;
-}
-
-/* 3D card effect */
-.card-3d {
-  @apply transition-transform duration-300 transform-gpu;
-}
-
-.card-3d:hover {
-  transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
-}
-
-/* Tab bar for mobile */
-@media (max-width: 768px) {
-  .mobile-tab-bar {
-    @apply fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t z-50;
+/* Responsive styles */
+@media (max-width: 640px) {
+  .section-number {
+    font-size: 4rem;
   }
 
-  .mobile-tab-content {
-    @apply flex justify-around items-center py-2;
-  }
-
-  .mobile-tab-item {
-    @apply flex flex-col items-center p-2;
+  .pipeline-node {
+    width: 12px;
+    height: 12px;
   }
 }

@@ -1,355 +1,350 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { ParallaxSection } from "@/components/parallax-section"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useRef } from "react"
+import Image from "next/image"
+import { motion, useInView } from "framer-motion"
+import { CheckCircle, Users } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Popup } from "@/components/ui/popup"
 
 export default function AboutPage() {
-  const [loading, setLoading] = useState(true)
+  const ref1 = useRef(null)
+  const ref2 = useRef(null)
+  const ref3 = useRef(null)
+  const isInView1 = useInView(ref1, { once: true, margin: "-100px" })
+  const isInView2 = useInView(ref2, { once: true, margin: "-100px" })
+  const isInView3 = useInView(ref3, { once: true, margin: "-100px" })
 
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 1500)
-
-    return () => clearTimeout(timer)
-  }, [])
+  const teamMembers = [
+    {
+      name: "Victor Edet Coleman",
+      role: "CEO & Founder",
+      bio: "Victor brings a passion for innovation and a deep expertise in software engineering, animation, and emerging technologies. Founded RYPTO TEC INC in 2023 with a vision to transform ideas into impactful solutions.",
+      image: "/placeholder.svg?height=400&width=400",
+      details: {
+        expertise: ["Software Engineering", "3D Animation", "VR/AR Development", "Business Strategy"],
+        education: "BSc in Computer Science, MSc in Digital Media",
+        experience: "Over 10 years of experience in technology and digital media industries.",
+        vision:
+          "To create innovative solutions that push the boundaries of what's possible with technology, setting new standards for excellence and creativity.",
+      },
+    },
+    {
+      name: "Jane Smith",
+      role: "CTO",
+      bio: "With over 15 years of experience in software development, Jane leads our technical strategy and innovation.",
+      image: "/placeholder.svg?height=400&width=400",
+    },
+    {
+      name: "Michael Johnson",
+      role: "Creative Director",
+      bio: "Michael oversees all creative aspects of our projects, bringing his extensive background in design and animation.",
+      image: "/placeholder.svg?height=400&width=400",
+    },
+    {
+      name: "Sarah Williams",
+      role: "Head of VR/AR",
+      bio: "Sarah specializes in virtual and augmented reality technologies, pushing the boundaries of immersive experiences.",
+      image: "/placeholder.svg?height=400&width=400",
+    },
+  ]
 
   return (
-    <>
+    <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-background border-b">
-        <div className="container mx-auto px-4 py-24">
-          <div className="max-w-4xl">
-            <div className="text-sm text-muted-foreground mb-4">WHO WE ARE</div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight">
-              RYPTO <span className="text-primary">TEC INC</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl">
-              A next-generation Liberian technology company focused on building immersive digital experiences and
-              advanced software systems.
+      <section className="relative py-20 md:py-32">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
+            <motion.div
+              className="flex flex-col justify-center space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="space-y-2">
+                <h1
+                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none"
+                  title="About RYPTO TEC INC"
+                >
+                  About RYPTO TEC INC
+                </h1>
+                <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  A forward-thinking technology company founded in 2023 by Victor Edet Coleman, specializing in software
+                  engineering, animation, and emerging technologies.
+                </p>
+              </div>
+            </motion.div>
+            <motion.div
+              className="flex items-center justify-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <div className="relative h-[350px] w-[350px] rounded-lg overflow-hidden">
+                <Image
+                  src="/placeholder.svg?height=600&width=800"
+                  alt="RYPTO TEC Office"
+                  fill
+                  className="object-cover"
+                  title="Our office"
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Story Section */}
+      <section className="py-12 md:py-24" ref={ref1}>
+        <div className="container px-4 md:px-6">
+          <motion.div
+            className="mx-auto max-w-3xl space-y-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView1 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl" title="Our Story">
+                Our Story
+              </h2>
+              <p className="mt-4 text-muted-foreground md:text-lg">
+                RYPTO TEC INC was founded in 2023 by Victor Edet Coleman with a vision to transform ideas into
+                impactful, real-world solutions that redefine industries and improve lives through digital and
+                interactive experiences.
+              </p>
+            </div>
+            <Tabs defaultValue="mission" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="mission" title="Our mission">
+                  Mission
+                </TabsTrigger>
+                <TabsTrigger value="vision" title="Our vision">
+                  Vision
+                </TabsTrigger>
+                <TabsTrigger value="values" title="Our values">
+                  Values
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="mission" className="mt-6 space-y-4 text-left">
+                <h3 className="text-xl font-semibold">Our Mission</h3>
+                <p>
+                  To create innovative digital solutions that solve real-world problems and enhance human experiences
+                  through the seamless integration of technology, design, and creativity.
+                </p>
+              </TabsContent>
+              <TabsContent value="vision" className="mt-6 space-y-4 text-left">
+                <h3 className="text-xl font-semibold">Our Vision</h3>
+                <p>
+                  To be a global leader in creating transformative digital experiences that push the boundaries of
+                  what's possible with technology, setting new standards for innovation and excellence.
+                </p>
+              </TabsContent>
+              <TabsContent value="values" className="mt-6 space-y-4 text-left">
+                <h3 className="text-xl font-semibold">Our Values</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <CheckCircle className="mr-2 h-5 w-5 text-primary shrink-0" />
+                    <span>Innovation: We constantly push boundaries and explore new possibilities.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="mr-2 h-5 w-5 text-primary shrink-0" />
+                    <span>Excellence: We strive for the highest quality in everything we do.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="mr-2 h-5 w-5 text-primary shrink-0" />
+                    <span>Collaboration: We believe in the power of teamwork and diverse perspectives.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="mr-2 h-5 w-5 text-primary shrink-0" />
+                    <span>Integrity: We conduct business with honesty, transparency, and ethical standards.</span>
+                  </li>
+                </ul>
+              </TabsContent>
+            </Tabs>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Tech Stack Section */}
+      <section className="py-12 md:py-24 bg-muted/50" ref={ref2}>
+        <div className="container px-4 md:px-6">
+          <motion.div
+            className="mx-auto max-w-3xl space-y-4 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView2 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl" title="Our Technology Stack">
+              Our Technology Stack
+            </h2>
+            <p className="text-muted-foreground md:text-lg">
+              We leverage a modern and dynamic tech stack to build scalable, efficient, and user-centric solutions.
             </p>
+          </motion.div>
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                title: "Frontend Development",
+                items: ["Next.js", "React", "Tailwind CSS", "Vite"],
+              },
+              {
+                title: "Backend Development",
+                items: ["Node.js", "Express", "MongoDB", "GraphQL"],
+              },
+              {
+                title: "3D and Animation",
+                items: ["Blender", "Three.js", "WebGL", "GSAP"],
+              },
+              {
+                title: "VR/AR Technologies",
+                items: ["Unity", "A-Frame", "WebXR", "AR.js"],
+              },
+            ].map((category, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView2 ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.1 * index }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle title={category.title}>{category.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      {category.items.map((item, i) => (
+                        <li key={i} className="flex items-center">
+                          <CheckCircle className="mr-2 h-4 w-4 text-primary" />
+                          <span title={item}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Company Info */}
-      <section className="py-24">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2">
-              <h2 className="text-4xl font-bold mb-8">Our Identity</h2>
-              {loading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-5/6" />
-                  <Skeleton className="h-6 w-4/5" />
-                </div>
-              ) : (
-                <div className="space-y-6 text-lg">
-                  <p>
-                    Founded in 2023 by Victor Edet Coleman, RYPTO represents the vision of a new, self-driven African
-                    tech movement—one that doesn't wait for permission, funding, or approval to innovate.
-                  </p>
-                  <p>
-                    At our core, we are a collective of developers, designers, engineers, and dreamers pushing the
-                    boundaries of what's possible with code, creativity, and 3D computation.
-                  </p>
-                  <p>
-                    We exist to empower the digital future of Africa—with products, platforms, and innovations built by
-                    us and for us.
-                  </p>
-                </div>
-              )}
+      {/* Team Section */}
+      <section className="py-12 md:py-24" ref={ref3}>
+        <div className="container px-4 md:px-6">
+          <motion.div
+            className="mx-auto max-w-3xl space-y-4 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView3 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center justify-center rounded-full bg-muted px-3 py-1 text-sm">
+              <Users className="mr-2 h-4 w-4" />
+              <span>Our Team</span>
             </div>
-            <div>
-              <div className="bg-muted p-8 rounded-lg">
-                {loading ? (
-                  <div className="space-y-4">
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-6 w-full" />
-                    <Skeleton className="h-6 w-2/3" />
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-6 w-1/2" />
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-sm text-muted-foreground">Company Name</div>
-                      <div className="font-medium">RYPTO TEC INC</div>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl" title="Meet Our Team">
+              Meet Our Team
+            </h2>
+            <p className="text-muted-foreground md:text-lg">
+              Our talented team of experts is passionate about creating innovative solutions.
+            </p>
+          </motion.div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {teamMembers.map((member, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView3 ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.1 * index }}
+                className="group"
+              >
+                <Popup
+                  trigger={
+                    <Card className="overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg">
+                      <div className="aspect-square relative overflow-hidden">
+                        <Image
+                          src={member.image || "/placeholder.svg"}
+                          alt={member.name}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          title={member.name}
+                        />
+                      </div>
+                      <CardHeader className="p-4">
+                        <CardTitle title={member.name}>{member.name}</CardTitle>
+                        <CardDescription>{member.role}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0">
+                        <p className="text-sm text-muted-foreground">{member.bio}</p>
+                      </CardContent>
+                    </Card>
+                  }
+                  title={member.name}
+                  size="lg"
+                >
+                  {member.name === "Victor Edet Coleman" ? (
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="aspect-square relative overflow-hidden rounded-lg">
+                        <Image
+                          src={member.image || "/placeholder.svg"}
+                          alt={member.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-xl font-bold">{member.name}</h3>
+                          <p className="text-muted-foreground">{member.role}</p>
+                        </div>
+                        <p>{member.bio}</p>
+                        <div className="space-y-3">
+                          <h4 className="font-medium">Areas of Expertise</h4>
+                          <ul className="grid grid-cols-2 gap-2">
+                            {member.details?.expertise.map((item, i) => (
+                              <li key={i} className="flex items-center">
+                                <CheckCircle className="mr-2 h-4 w-4 text-primary shrink-0" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="font-medium">Education</h4>
+                          <p className="text-sm">{member.details?.education}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="font-medium">Experience</h4>
+                          <p className="text-sm">{member.details?.experience}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="font-medium">Vision</h4>
+                          <p className="text-sm">{member.details?.vision}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Founded</div>
-                      <div className="font-medium">2023</div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="aspect-video relative overflow-hidden rounded-lg">
+                        <Image
+                          src={member.image || "/placeholder.svg"}
+                          alt={member.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold">{member.name}</h3>
+                        <p className="text-muted-foreground">{member.role}</p>
+                      </div>
+                      <p>{member.bio}</p>
                     </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Founder</div>
-                      <div className="font-medium">Victor Edet Coleman</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Industry</div>
-                      <div className="font-medium">Technology, Software, VR/AR, AI, Architecture</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Location</div>
-                      <div className="font-medium">Monrovia, Liberia</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+                  )}
+                </Popup>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* Mission & Vision */}
-      <section className="bg-muted py-24">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-24">
-            <div>
-              <div className="text-8xl font-bold text-primary mb-6">01</div>
-              <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
-              {loading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <Skeleton className="h-4 w-4/5" />
-                </div>
-              ) : (
-                <p className="text-muted-foreground">
-                  To design and develop transformative technology experiences that serve communities, spark creativity,
-                  and raise the standard of African innovation on a global scale.
-                </p>
-              )}
-
-              <div className="mt-12">
-                <h3 className="text-lg font-medium mb-4">We believe:</h3>
-                {loading ? (
-                  <div className="space-y-4">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                  </div>
-                ) : (
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>Technology should reflect the culture it comes from.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>Africa has the talent—it needs platforms and purpose.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>
-                        Real innovation isn't about trends—it's about solving real problems with lasting impact.
-                      </span>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-8xl font-bold text-primary mb-6">02</div>
-              <h2 className="text-3xl font-bold mb-6">Our Vision</h2>
-              {loading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                </div>
-              ) : (
-                <p className="text-muted-foreground">
-                  A future where Liberia is not just a consumer of global tech, but a creator of it.
-                </p>
-              )}
-
-              <div className="mt-12">
-                <h3 className="text-lg font-medium mb-4">We aim to become:</h3>
-                {loading ? (
-                  <div className="space-y-4">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                  </div>
-                ) : (
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>A hub for immersive tech in West Africa.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>A training ground for software engineers and 3D creators.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>
-                        A beacon of homegrown innovation, proving world-class products can come from local soil.
-                      </span>
-                    </li>
-                  </ul>
-                )}
-              </div>
-
-              <div className="mt-12 p-4 border-l-4 border-primary">
-                <p className="text-xl font-medium">We don't follow the rules—we rewrite them.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <ParallaxSection className="py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold mb-12 text-center">Our Impact</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {loading ? (
-                <>
-                  <Skeleton className="h-48 w-full" />
-                  <Skeleton className="h-48 w-full" />
-                  <Skeleton className="h-48 w-full" />
-                </>
-              ) : (
-                <>
-                  <div className="p-6 rounded-lg border">
-                    <div className="text-5xl font-bold mb-4">92%</div>
-                    <p className="text-muted-foreground">
-                      Of our projects are focused on solving unique African challenges with innovative technology
-                    </p>
-                  </div>
-                  <div className="p-6 rounded-lg border">
-                    <div className="text-5xl font-bold mb-4">64%</div>
-                    <p className="text-muted-foreground">
-                      Of our solutions are designed to work in low-bandwidth and offline environments
-                    </p>
-                  </div>
-                  <div className="p-6 rounded-lg border">
-                    <div className="text-5xl font-bold mb-4">100%</div>
-                    <p className="text-muted-foreground">
-                      Committed to building technology that empowers African communities
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </ParallaxSection>
-
-      {/* What We Do */}
-      <section className="bg-muted py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="text-sm text-muted-foreground mb-2">WHAT WE DO</div>
-            <h2 className="text-4xl font-bold">Core Competencies</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {loading ? (
-              <>
-                <Skeleton className="h-64 w-full" />
-                <Skeleton className="h-64 w-full" />
-                <Skeleton className="h-64 w-full" />
-                <Skeleton className="h-64 w-full" />
-              </>
-            ) : (
-              <>
-                <div className="p-8 border rounded-lg">
-                  <div className="text-primary text-lg font-medium mb-2">01. Software Engineering</div>
-                  <p className="mb-6">
-                    Full-stack development (Web, Desktop, Mobile), System tools, utilities, and product-based software
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Full-stack Web Development</li>
-                    <li>• Mobile App Development</li>
-                    <li>• Desktop Applications</li>
-                  </ul>
-                </div>
-
-                <div className="p-8 border rounded-lg">
-                  <div className="text-primary text-lg font-medium mb-2">02. Extended Reality (XR)</div>
-                  <p className="mb-6">
-                    VR/AR experiences for education, health, entertainment with Unity, A-Frame, and WebXR expertise
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• VR Applications</li>
-                    <li>• AR Solutions</li>
-                    <li>• 360° Virtual Tours</li>
-                  </ul>
-                </div>
-
-                <div className="p-8 border rounded-lg">
-                  <div className="text-primary text-lg font-medium mb-2">03. 3D Content Creation</div>
-                  <p className="mb-6">
-                    Blender-based modeling, animation, and visualization for architecture, games, and simulation
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• 3D Modeling</li>
-                    <li>• Animation</li>
-                    <li>• Architectural Visualization</li>
-                  </ul>
-                </div>
-
-                <div className="p-8 border rounded-lg">
-                  <div className="text-primary text-lg font-medium mb-2">04. AI & Automation</div>
-                  <p className="mb-6">
-                    Custom AI tools for business, language processing, and specialized in underrepresented languages
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Chatbots & Virtual Assistants</li>
-                    <li>• Natural Language Processing</li>
-                    <li>• Predictive Analytics</li>
-                  </ul>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Founder */}
-      <section className="py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="text-sm text-muted-foreground mb-2">LEADERSHIP</div>
-              <h2 className="text-4xl font-bold">Meet the Founder</h2>
-            </div>
-
-            {loading ? (
-              <div className="flex flex-col items-center text-center">
-                <Skeleton className="h-32 w-32 rounded-full mb-6" />
-                <Skeleton className="h-6 w-48 mb-2" />
-                <Skeleton className="h-4 w-32 mb-4" />
-                <Skeleton className="h-4 w-full max-w-md mb-1" />
-                <Skeleton className="h-4 w-full max-w-md mb-1" />
-                <Skeleton className="h-4 w-full max-w-md mb-1" />
-                <Skeleton className="h-4 w-3/4 max-w-md" />
-              </div>
-            ) : (
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 rounded-full bg-muted mb-6 flex items-center justify-center">
-                  <span className="text-4xl font-bold">VC</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-2">Victor Edet Coleman</h3>
-                <p className="text-primary mb-6">Founder & CEO</p>
-                <p className="text-muted-foreground max-w-md">
-                  A visionary technologist with a passion for leveraging technology to solve African challenges. Victor
-                  founded RYPTO TEC INC with the goal of building a digital ecosystem that empowers Liberians and
-                  Africans to lead in global tech innovation.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-    </>
+    </div>
   )
 }
