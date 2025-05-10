@@ -88,6 +88,52 @@ export default function Home() {
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/50 to-transparent pointer-events-none" />
       </section>
 
+      {/* Glassy Video Showcase Section */}
+      <section className="relative py-20 md:py-32 bg-transparent">
+        <div className="container relative z-10 px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-6xl mx-auto"
+          >
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-3xl opacity-30 group-hover:opacity-50 blur-xl transition-all duration-500"></div>
+              
+              <div className="relative bg-white/10 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+                <div className="aspect-video w-full">
+                  <video
+                    src="/video/animation_studio.mp4"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    controls
+                    title="Rypto Creative Showcase"
+                  />
+                </div>
+                
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-black/20 backdrop-blur-sm">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-2">Rypto Creative Showcase</h3>
+                      <p className="text-white/70 text-sm">
+                        Exploring the intersection of technology and creative expression
+                      </p>
+                    </div>
+                    <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full flex items-center transition-colors">
+                      Explore
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Services Section */}
       <section className="py-12 md:py-24" ref={ref1}>
         <div className="container px-4 md:px-6">
