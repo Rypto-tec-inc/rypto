@@ -75,13 +75,20 @@ export default function ContactPage() {
               <CardHeader className="pb-2">
                 <div className="flex items-center space-x-2">
                   <Mail className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-lg" title="Email Us">
-                    Email Us
+                  <CardTitle className="text-lg" title="Contact Information">
+                    Contact Information
                   </CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-sm">For general inquiries and information:</CardDescription>
+                <CardDescription className="text-sm">
+                  Rypto Tech Inc
+                  Email: rypto2099@gmail.com
+                  Phone: +231 776 800 64
+                  Location: Monrovia, Liberia
+
+                  We are a Liberian technology company dedicated to innovative solutions and digital transformation.
+                </CardDescription>
                 <a
                   href="mailto:info@ryptotec.com"
                   className="mt-2 block font-medium text-foreground hover:underline"

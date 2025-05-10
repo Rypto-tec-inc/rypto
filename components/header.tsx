@@ -11,13 +11,13 @@ import { ModeToggle } from "./mode-toggle"
 
 const navItems = [
   { name: "Home", path: "/" },
+  { name: "Teams", path: "/teams" },
+  { name: "Products", path: "/products" },
   { name: "Services", path: "/services" },
   { name: "Work", path: "/work" },
   { name: "Gallery", path: "/gallery" },
   { name: "About", path: "/about" },
-  { name: "Company", path: "/company" },
   { name: "Studio", path: "/studio" },
-  { name: "Pipeline", path: "/pipeline" },
   { name: "Careers", path: "/careers" },
   { name: "Contact", path: "/contact" },
 ]

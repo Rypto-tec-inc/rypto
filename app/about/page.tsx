@@ -70,8 +70,7 @@ export default function AboutPage() {
                   About RYPTO TEC INC
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                  A forward-thinking technology company founded in 2023 by Victor Edet Coleman, specializing in software
-                  engineering, animation, and emerging technologies.
+                  A pioneering Liberian tech company founded in 2023 by Victor Edet Coleman, specializing in software engineering, animation, and emerging technologies across Africa and beyond.
                 </p>
               </div>
             </motion.div>

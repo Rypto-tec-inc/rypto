@@ -33,62 +33,59 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32">
+      <section className="relative py-20 md:py-32 bg-gradient-to-br from-background to-muted/20">
         <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
             <motion.div
-              className="flex flex-col justify-center space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              className="order-2 lg:order-1 flex flex-col space-y-6"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                  Transforming Ideas Into Impactful Solutions
+              <div className="space-y-4">
+                <div className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
+                  Innovative Tech Solutions
+                </div>
+                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl xl:text-6xl">
+                  Transforming Ideas Into
+                  <span className="block text-primary">Impactful Digital Experiences</span>
                 </h1>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                  RYPTO TEC INC is a forward-thinking technology company founded in 2023 by Victor Edet Coleman,
-                  specializing in software engineering, animation, and emerging technologies.
+                <p className="text-lg text-muted-foreground max-w-xl">
+                  At RYPTO TEC INC, we blend cutting-edge technologies with creative vision to deliver
+                  transformative solutions that push the boundaries of what's possible.
                 </p>
               </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button asChild size="lg">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button asChild size="lg" className="w-full sm:w-auto">
                   <Link href="/contact">
-                    Get Started
+                    Explore Our Solutions
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Popup
-                  trigger={
-                    <Button variant="outline" size="lg">
-                      Watch Demo
-                      <ExternalLink className="ml-2 h-4 w-4" />
-                    </Button>
-                  }
-                  title="RYPTO TEC Demo"
-                  size="lg"
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="w-full sm:w-auto"
+                  onClick={() => window.open('/demo', '_blank')}
                 >
-                  <div className="aspect-video w-full">
-                    <iframe
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                      title="RYPTO TEC Demo"
-                      className="w-full h-full"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                </Popup>
+                  View Case Studies
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </motion.div>
             <motion.div
-              className="flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              className="order-1 lg:order-2 flex items-center justify-center"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             >
-              <ComputerAnimation />
+              <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
+                <ComputerAnimation />
+              </div>
             </motion.div>
           </div>
         </div>
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/50 to-transparent pointer-events-none" />
       </section>
 
       {/* Services Section */}

@@ -6,9 +6,10 @@ import Image from "next/image"
 import Header from "@/components/header"
 
 export default function LoadingScreen() {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    setIsLoading(true)
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, 2500)
@@ -16,8 +17,10 @@ export default function LoadingScreen() {
     return () => clearTimeout(timer)
   }, [])
 
+  if (typeof window === 'undefined') return null
+
   return (
-    <AnimatePresence>
+    <AnimatePresence mode='wait'>
       {isLoading && (
         <motion.div
           initial={{ opacity: 1 }}
@@ -62,22 +65,7 @@ export default function LoadingScreen() {
             </div>
           </div>
 
-          <div className="absolute inset-0 z-0">
-            <div className="network-animation">
-              {Array.from({ length: 50 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="network-node"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 5}s`,
-                    animationDuration: `${5 + Math.random() * 10}s`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+
         </motion.div>
       )}
     </AnimatePresence>

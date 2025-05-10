@@ -105,7 +105,8 @@ export default function Footer() {
               </Link>
             </div>
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} RYPTO TEC INC. All rights reserved.
+              &copy; {new Date().getFullYear()} &copy; 2024 RYPTO TEC INC. All rights reserved.
+              Contact: rypto2099@gmail.com | +231 776 800 64 | Monrovia, Liberia
             </p>
           </div>
         </div>
