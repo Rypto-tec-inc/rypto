@@ -1,554 +1,741 @@
 "use client"
 
-import { useRef } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { motion, useInView } from "framer-motion"
-import { ArrowRight, Camera, Film, Layers, Music, Palette, Play, Video } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useRef, useEffect } from "react"
+import { FadeInOnScroll, ScaleOnScroll, FloatingElements } from "@/components/scroll-animations"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Popup } from "@/components/ui/popup"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Slider } from "@/components/ui/slider"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Download,
+  Code,
+  Layers,
+  Palette,
+  Wand2,
+  Sparkles,
+  Zap,
+  Save,
+  Share2,
+  Play,
+  Pause,
+  RotateCcw,
+} from "lucide-react"
+import { useInView, useScroll, useTransform } from "framer-motion"
+import { Film, CuboidIcon as Cube, Monitor } from "lucide-react"
 
 export default function StudioPage() {
+  const [activeTab, setActiveTab] = useState("design")
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [theme, setTheme] = useState("light")
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [canvasElements, setCanvasElements] = useState<any[]>([])
+  const [selectedElement, setSelectedElement] = useState<number | null>(null)
+
   const ref1 = useRef(null)
   const ref2 = useRef(null)
   const ref3 = useRef(null)
+  const heroRef = useRef(null)
   const isInView1 = useInView(ref1, { once: true, margin: "-100px" })
   const isInView2 = useInView(ref2, { once: true, margin: "-100px" })
   const isInView3 = useInView(ref3, { once: true, margin: "-100px" })
 
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  })
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0])
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.9])
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 100])
+
+  const [activeCategory, setActiveCategory] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [email, setEmail] = useState("")
+
+  // Portfolio data
+  const portfolioItems = [
+    {
+      id: 1,
+      title: "Corporate Brand Animation",
+      category: "character",
+      tags: ["3D Animation", "Character Design", "Corporate"],
+      image: "/placeholder.svg?height=400&width=600&text=Project+1",
+      client: "Global Finance Corp",
+      duration: "4 weeks",
+      team: ["Michael Johnson", "Ryan Kim"],
+      description:
+        "A dynamic 3D character animation for a corporate brand identity, featuring custom character design and storytelling.",
+      testimonial: {
+        text: "The animation exceeded our expectations and perfectly captured our brand values.",
+        author: "Sarah Chen, Marketing Director",
+      },
+    },
+    {
+      id: 2,
+      title: "Architectural Visualization",
+      category: "environment",
+      tags: ["3D Modeling", "Architectural", "Visualization"],
+      image: "/placeholder.svg?height=400&width=600&text=Project+2",
+      client: "Urban Developers Ltd",
+      duration: "6 weeks",
+      team: ["Sarah Williams", "Ryan Kim"],
+      description:
+        "Photorealistic 3D visualization of a proposed urban development project, including exterior and interior spaces.",
+      testimonial: {
+        text: "The visualizations helped us secure funding by bringing our vision to life.",
+        author: "James Wilson, Project Manager",
+      },
+    },
+    {
+      id: 3,
+      title: "Educational Character Series",
+      category: "character",
+      tags: ["Character Animation", "Educational", "Series"],
+      image: "/placeholder.svg?height=400&width=600&text=Project+3",
+      client: "Learn & Grow Education",
+      duration: "12 weeks",
+      team: ["Michael Johnson", "Emily Martinez"],
+      description:
+        "A series of animated characters designed for an educational platform, teaching science concepts to children.",
+      testimonial: {
+        text: "Children love the characters and engagement with our content has increased by 40%.",
+        author: "Maria Lopez, Content Director",
+      },
+    },
+    {
+      id: 4,
+      title: "Virtual Reality Environment",
+      category: "environment",
+      tags: ["VR", "Environment Design", "Interactive"],
+      image: "/placeholder.svg?height=400&width=600&text=Project+4",
+      client: "Tech Innovations Inc",
+      duration: "8 weeks",
+      team: ["Sarah Williams", "David Lee"],
+      description:
+        "An immersive virtual reality environment for a training simulation, featuring realistic physics and interactions.",
+      testimonial: {
+        text: "The VR environment has revolutionized our training program with incredible realism.",
+        author: "Robert Chang, Training Manager",
+      },
+    },
+    {
+      id: 5,
+      title: "Product Visualization",
+      category: "product",
+      tags: ["Product Design", "3D Modeling", "Commercial"],
+      image: "/placeholder.svg?height=400&width=600&text=Project+5",
+      client: "NextGen Products",
+      duration: "3 weeks",
+      team: ["Ryan Kim", "Emily Martinez"],
+      description:
+        "Detailed 3D visualization of a new consumer electronics product, showcasing features and design elements.",
+      testimonial: {
+        text: "The product visualizations were key to our successful product launch campaign.",
+        author: "Thomas Wright, Product Manager",
+      },
+    },
+    {
+      id: 6,
+      title: "Animated Short Film",
+      category: "character",
+      tags: ["Storytelling", "Character Animation", "Short Film"],
+      image: "/placeholder.svg?height=400&width=600&text=Project+6",
+      client: "Independent Production",
+      duration: "16 weeks",
+      team: ["Michael Johnson", "Ryan Kim", "Sarah Williams"],
+      description:
+        "An award-winning animated short film featuring original characters and a compelling narrative about climate change.",
+      testimonial: {
+        text: "The film has been selected for multiple international film festivals and received critical acclaim.",
+        author: "Film Festival Jury",
+      },
+    },
+  ]
+
+  // Filter portfolio items
+  const filteredPortfolio = portfolioItems.filter((item) => {
+    const matchesCategory = activeCategory === "all" || item.category === activeCategory
+    const matchesSearch =
+      searchQuery === "" ||
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    return matchesCategory && matchesSearch
+  })
+
+  // Services data with pricing
   const services = [
     {
-      icon: <Video className="h-10 w-10" />,
-      title: "Video Production",
-      description: "Professional video production services for commercials, corporate videos, product demos, and more.",
+      icon: Cube,
+      title: "3D Modeling",
+      description: "High-quality 3D models for characters, environments, products, and architectural visualization.",
       features: [
-        "Concept development and storyboarding",
-        "Professional filming with high-end equipment",
-        "Expert editing and post-production",
-        "Color grading and visual effects",
-        "Sound design and audio mixing",
+        "Custom character modeling",
+        "Environment and scene creation",
+        "Product visualization",
+        "Architectural modeling",
+        "Texturing and materials",
+      ],
+      pricing: [
+        { name: "Basic", price: "$500+", description: "Simple models with basic texturing" },
+        { name: "Standard", price: "$1,500+", description: "Detailed models with advanced texturing" },
+        { name: "Premium", price: "$3,000+", description: "Complex models with photorealistic details" },
       ],
     },
     {
-      icon: <Layers className="h-10 w-10" />,
-      title: "3D Animation",
-      description:
-        "Stunning 3D animations for product visualizations, architectural walkthroughs, character animations, and more.",
+      icon: Film,
+      title: "Character Animation",
+      description: "Bringing characters to life with fluid, expressive animation for games, films, and commercials.",
       features: [
-        "3D modeling and texturing",
-        "Character rigging and animation",
-        "Environment design",
-        "Lighting and rendering",
-        "Compositing and visual effects",
+        "Character rigging",
+        "Facial animation",
+        "Motion capture integration",
+        "Stylized animation",
+        "Realistic movement",
+      ],
+      pricing: [
+        { name: "Basic", price: "$1,000+", description: "Simple character animations (15-30 seconds)" },
+        { name: "Standard", price: "$3,000+", description: "Complex character animations (30-60 seconds)" },
+        { name: "Premium", price: "$7,000+", description: "Full animated sequences with multiple characters" },
       ],
     },
     {
-      icon: <Film className="h-10 w-10" />,
+      icon: Layers,
+      title: "Visual Effects",
+      description: "Stunning visual effects that enhance storytelling and create immersive experiences.",
+      features: ["Particle systems", "Fluid simulations", "Destruction effects", "Environment effects", "Compositing"],
+      pricing: [
+        { name: "Basic", price: "$800+", description: "Simple effects integration" },
+        { name: "Standard", price: "$2,500+", description: "Complex effect sequences" },
+        { name: "Premium", price: "$5,000+", description: "Photorealistic effects with advanced physics" },
+      ],
+    },
+    {
+      icon: Code,
+      title: "Technical Animation",
+      description: "Specialized animation for technical products, scientific visualization, and educational content.",
+      features: [
+        "Product demonstrations",
+        "Scientific visualizations",
+        "Medical animations",
+        "Educational content",
+        "Technical explainers",
+      ],
+      pricing: [
+        { name: "Basic", price: "$1,200+", description: "Simple technical animations (30-60 seconds)" },
+        { name: "Standard", price: "$3,500+", description: "Detailed technical sequences (1-2 minutes)" },
+        { name: "Premium", price: "$8,000+", description: "Comprehensive technical presentations (2+ minutes)" },
+      ],
+    },
+    {
+      icon: Palette,
+      title: "Art Direction",
+      description: "Creative guidance to ensure visual consistency and artistic excellence across projects.",
+      features: [
+        "Style development",
+        "Visual language creation",
+        "Color theory application",
+        "Mood boards and concepts",
+        "Creative consultation",
+      ],
+      pricing: [
+        { name: "Basic", price: "$1,000+", description: "Style consultation and basic direction" },
+        { name: "Standard", price: "$3,000+", description: "Comprehensive art direction for medium projects" },
+        { name: "Premium", price: "$6,000+", description: "Full creative direction for large-scale projects" },
+      ],
+    },
+    {
+      icon: Monitor,
       title: "Motion Graphics",
-      description:
-        "Eye-catching motion graphics for explainer videos, title sequences, advertisements, and social media content.",
+      description: "Dynamic motion graphics for branding, UI/UX animation, and promotional content.",
       features: [
         "Logo animations",
-        "Kinetic typography",
-        "Infographic animations",
-        "UI/UX animations",
-        "Social media content",
+        "UI/UX motion design",
+        "Infographics animation",
+        "Title sequences",
+        "Promotional videos",
       ],
-    },
-    {
-      icon: <Camera className="h-10 w-10" />,
-      title: "Photography",
-      description:
-        "Professional photography services for product photography, corporate portraits, event coverage, and more.",
-      features: [
-        "Product photography",
-        "Corporate portraits",
-        "Event coverage",
-        "Architectural photography",
-        "Retouching and editing",
-      ],
-    },
-    {
-      icon: <Palette className="h-10 w-10" />,
-      title: "Graphic Design",
-      description: "Creative graphic design services for branding, marketing materials, packaging, and digital assets.",
-      features: ["Brand identity design", "Marketing collateral", "Packaging design", "Digital assets", "Print design"],
-    },
-    {
-      icon: <Music className="h-10 w-10" />,
-      title: "Audio Production",
-      description:
-        "Professional audio production services for voiceovers, sound design, music composition, and audio mixing.",
-      features: [
-        "Voiceover recording",
-        "Sound design",
-        "Music composition",
-        "Audio mixing and mastering",
-        "Podcast production",
+      pricing: [
+        { name: "Basic", price: "$600+", description: "Simple motion graphics (15-30 seconds)" },
+        { name: "Standard", price: "$1,800+", description: "Complex motion graphics (30-60 seconds)" },
+        { name: "Premium", price: "$4,000+", description: "Premium motion graphics packages (60+ seconds)" },
       ],
     },
   ]
 
-  const portfolioItems = {
-    video: [
-      {
-        title: "Corporate Brand Film",
-        description: "A cinematic brand film showcasing company values and vision.",
-        image: "/placeholder.svg?height=400&width=600",
-      },
-      {
-        title: "Product Launch Video",
-        description: "Dynamic product launch video highlighting key features and benefits.",
-        image: "/placeholder.svg?height=400&width=600",
-      },
-    ],
-    animation: [
-      {
-        title: "Architectural Visualization",
-        description: "3D animation showcasing a modern architectural design.",
-        image: "/placeholder.svg?height=400&width=600",
-      },
-      {
-        title: "Character Animation",
-        description: "Expressive character animation for a short film.",
-        image: "/placeholder.svg?height=400&width=600",
-      },
-    ],
-    design: [
-      {
-        title: "Brand Identity System",
-        description: "Comprehensive brand identity system for a tech startup.",
-        image: "/placeholder.svg?height=400&width=600",
-      },
-      {
-        title: "Packaging Design",
-        description: "Creative packaging design for a premium product line.",
-        image: "/placeholder.svg?height=400&width=600",
-      },
-    ],
+  // Handle newsletter subscription
+  const handleSubscribe = (e) => {
+    e.preventDefault()
+    // This would normally connect to an API
+    alert(`Thank you for subscribing with ${email}! You'll receive our latest studio updates.`)
+    setEmail("")
   }
 
-  const equipmentList = {
-    cameras: ["RED Komodo 6K", "Sony FX6", "Canon C300 Mark III", "Blackmagic URSA Mini Pro 12K", "DJI Ronin 4D"],
-    lenses: [
-      "Canon Cinema Prime Lenses",
-      "Sony G Master Series",
-      "Zeiss Supreme Primes",
-      "Sigma Art Series",
-      "Angenieux Optimo Zooms",
-    ],
-    lighting: [
-      "ARRI SkyPanel S60-C",
-      "Aputure 600d Pro",
-      "Litepanels Gemini 2x1",
-      "Kino Flo Celeb LED",
-      "Nanlite Forza 500",
-    ],
-    audio: ["Sennheiser MKH 416", "Rode NTG5", "Sound Devices MixPre-10 II", "Shure SM7B", "Neumann U87"],
-    software: ["Adobe Creative Cloud Suite", "Autodesk Maya", "Cinema 4D", "DaVinci Resolve Studio", "Blender"],
+  // Simulate canvas rendering
+  useEffect(() => {
+    if (!canvasRef.current) return
+
+    const ctx = canvasRef.current.getContext("2d")
+    if (!ctx) return
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+
+    // Set background
+    ctx.fillStyle = theme === "light" ? "#ffffff" : "#1a1a1a"
+    ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+
+    // Draw grid
+    ctx.strokeStyle = theme === "light" ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)"
+    ctx.lineWidth = 1
+
+    const gridSize = 20
+    for (let x = 0; x <= canvasRef.current.width; x += gridSize) {
+      ctx.beginPath()
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, canvasRef.current.height)
+      ctx.stroke()
+    }
+
+    for (let y = 0; y <= canvasRef.current.height; y += gridSize) {
+      ctx.beginPath()
+      ctx.moveTo(0, y)
+      ctx.lineTo(canvasRef.current.width, y)
+      ctx.stroke()
+    }
+
+    // Draw elements
+    canvasElements.forEach((element, index) => {
+      ctx.save()
+
+      // Highlight selected element
+      if (index === selectedElement) {
+        ctx.strokeStyle = "#3b82f6"
+        ctx.lineWidth = 2
+        ctx.strokeRect(element.x - 2, element.y - 2, element.width + 4, element.height + 4)
+      }
+
+      // Draw element
+      ctx.fillStyle = element.color
+      ctx.fillRect(element.x, element.y, element.width, element.height)
+
+      // Draw label
+      ctx.fillStyle = theme === "light" ? "#000000" : "#ffffff"
+      ctx.font = "12px sans-serif"
+      ctx.fillText(element.name, element.x + 5, element.y + 15)
+
+      ctx.restore()
+    })
+  }, [canvasElements, selectedElement, theme])
+
+  // Add a random element to canvas
+  const addElement = () => {
+    const newElement = {
+      name: `Element ${canvasElements.length + 1}`,
+      x: Math.random() * 300 + 50,
+      y: Math.random() * 200 + 50,
+      width: Math.random() * 100 + 50,
+      height: Math.random() * 100 + 50,
+      color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+    }
+
+    setCanvasElements([...canvasElements, newElement])
+  }
+
+  // Toggle play/pause animation
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying)
+  }
+
+  // Reset canvas
+  const resetCanvas = () => {
+    setCanvasElements([])
+    setSelectedElement(null)
+  }
+
+  // Toggle theme
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light")
   }
 
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative py-20 md:py-32">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
-            <motion.div
-              className="flex flex-col justify-center space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="space-y-2">
-                <h1
-                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none"
-                  title="RYPTO STUDIO"
-                >
-                  RYPTO STUDIO
-                </h1>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                  A creative production studio specializing in video production, 3D animation, motion graphics, and
-                  visual storytelling.
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button asChild size="lg">
-                  <Link href="/contact">
-                    Start Your Project
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Popup
-                  trigger={
-                    <Button variant="outline" size="lg">
-                      Watch Showreel
-                      <Play className="ml-2 h-4 w-4" />
-                    </Button>
-                  }
-                  title="RYPTO STUDIO Showreel"
-                  size="lg"
-                >
-                  <div className="aspect-video w-full">
-                    <iframe
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                      title="RYPTO STUDIO Showreel"
-                      className="w-full h-full"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                </Popup>
-              </div>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="relative h-[350px] w-full rounded-lg overflow-hidden">
-                <Image
-                  src="/placeholder.svg?height=700&width=700"
-                  alt="RYPTO STUDIO"
-                  fill
-                  className="object-cover"
-                  title="RYPTO STUDIO"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent"></div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+    <main className="min-h-screen">
+      <FloatingElements />
 
-      {/* Services Section */}
-      <section className="py-12 md:py-24" ref={ref1}>
-        <div className="container px-4 md:px-6">
-          <motion.div
-            className="mx-auto max-w-3xl space-y-4 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView1 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl" title="Our Services">
-              Our Services
-            </h2>
-            <p className="text-muted-foreground md:text-lg">
-              We offer a comprehensive range of creative services to bring your vision to life.
+      <div className="container mx-auto px-4 py-12">
+        <FadeInOnScroll>
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold tracking-tight mb-4">RYPTO TEC Studio</h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Our advanced design and development environment for creating cutting-edge digital experiences.
             </p>
-          </motion.div>
+          </div>
+        </FadeInOnScroll>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView1 ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-              >
-                <Popup
-                  trigger={
-                    <Card className="h-full cursor-pointer transition-all duration-300 hover:shadow-lg">
-                      <CardHeader>
-                        <div className="mb-2 text-primary">{service.icon}</div>
-                        <CardTitle title={service.title}>{service.title}</CardTitle>
-                        <CardDescription>{service.description}</CardDescription>
-                      </CardHeader>
-                    </Card>
-                  }
-                  title={service.title}
-                >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left sidebar */}
+          <Card className="lg:col-span-3 h-[calc(100vh-200px)] overflow-hidden flex flex-col">
+            <CardHeader className="pb-2">
+              <CardTitle>Tools</CardTitle>
+              <CardDescription>Design and development tools</CardDescription>
+            </CardHeader>
+
+            <Tabs defaultValue="design" onValueChange={setActiveTab} className="flex-1 flex flex-col">
+              <div className="px-4">
+                <TabsList className="w-full">
+                  <TabsTrigger value="design" className="flex-1">
+                    <Palette className="h-4 w-4 mr-2" />
+                    Design
+                  </TabsTrigger>
+                  <TabsTrigger value="code" className="flex-1">
+                    <Code className="h-4 w-4 mr-2" />
+                    Code
+                  </TabsTrigger>
+                  <TabsTrigger value="ai" className="flex-1">
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    AI
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              <div className="flex-1 overflow-auto p-4">
+                <TabsContent value="design" className="mt-0 h-full">
                   <div className="space-y-4">
-                    <p>{service.description}</p>
-                    <h3 className="text-lg font-medium">What We Offer:</h3>
-                    <ul className="space-y-2">
-                      {service.features.map((feature, i) => (
-                        <li key={i} className="flex items-start">
-                          <ArrowRight className="mr-2 h-4 w-4 mt-1 text-primary shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="pt-4">
-                      <Button asChild>
-                        <Link href="/contact">
-                          Get a Quote
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Elements</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" size="sm" onClick={addElement}>
+                          <Layers className="h-4 w-4 mr-2" />
+                          Add Shape
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Layers className="h-4 w-4 mr-2" />
+                          Add Text
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </Popup>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Portfolio Section */}
-      <section className="py-12 md:py-24 bg-muted/50" ref={ref2}>
-        <div className="container px-4 md:px-6">
-          <motion.div
-            className="mx-auto max-w-3xl space-y-4 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView2 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl" title="Our Portfolio">
-              Our Portfolio
-            </h2>
-            <p className="text-muted-foreground md:text-lg">
-              Explore our creative work across video production, animation, and design.
-            </p>
-          </motion.div>
-
-          <div className="mt-12">
-            <Tabs defaultValue="video" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="video" title="Video Production">
-                  Video
-                </TabsTrigger>
-                <TabsTrigger value="animation" title="3D Animation">
-                  Animation
-                </TabsTrigger>
-                <TabsTrigger value="design" title="Graphic Design">
-                  Design
-                </TabsTrigger>
-              </TabsList>
-
-              {Object.entries(portfolioItems).map(([category, items]) => (
-                <TabsContent key={category} value={category} className="mt-6">
-                  <div className="grid gap-6 md:grid-cols-2">
-                    {items.map((item, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView2 ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.6, delay: 0.1 * index }}
-                        className="group"
-                      >
-                        <Popup
-                          trigger={
-                            <Card className="overflow-hidden cursor-pointer">
-                              <div className="aspect-video relative overflow-hidden">
-                                <Image
-                                  src={item.image || "/placeholder.svg"}
-                                  alt={item.title}
-                                  fill
-                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                  title={item.title}
-                                />
-                              </div>
-                              <CardContent className="p-4">
-                                <h3 className="font-semibold" title={item.title}>
-                                  {item.title}
-                                </h3>
-                                <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                              </CardContent>
-                            </Card>
-                          }
-                          title={item.title}
-                          size="lg"
-                        >
-                          <div className="space-y-4">
-                            <div className="aspect-video relative overflow-hidden rounded-lg">
-                              <Image
-                                src={item.image || "/placeholder.svg"}
-                                alt={item.title}
-                                fill
-                                className="object-cover"
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Properties</h3>
+                      {selectedElement !== null ? (
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <Label htmlFor="element-x" className="text-xs">
+                                X Position
+                              </Label>
+                              <Input
+                                id="element-x"
+                                type="number"
+                                value={canvasElements[selectedElement]?.x}
+                                onChange={() => {}}
+                                className="h-8"
                               />
                             </div>
                             <div>
-                              <h3 className="text-xl font-bold">{item.title}</h3>
-                              <p className="text-muted-foreground mt-2">{item.description}</p>
-                            </div>
-                            <div className="pt-4">
-                              <Button asChild>
-                                <Link href="/contact">
-                                  Discuss a Similar Project
-                                  <ArrowRight className="ml-2 h-4 w-4" />
-                                </Link>
-                              </Button>
+                              <Label htmlFor="element-y" className="text-xs">
+                                Y Position
+                              </Label>
+                              <Input
+                                id="element-y"
+                                type="number"
+                                value={canvasElements[selectedElement]?.y}
+                                onChange={() => {}}
+                                className="h-8"
+                              />
                             </div>
                           </div>
-                        </Popup>
-                      </motion.div>
-                    ))}
+
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <Label htmlFor="element-width" className="text-xs">
+                                Width
+                              </Label>
+                              <Input
+                                id="element-width"
+                                type="number"
+                                value={canvasElements[selectedElement]?.width}
+                                onChange={() => {}}
+                                className="h-8"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="element-height" className="text-xs">
+                                Height
+                              </Label>
+                              <Input
+                                id="element-height"
+                                type="number"
+                                value={canvasElements[selectedElement]?.height}
+                                onChange={() => {}}
+                                className="h-8"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="element-color" className="text-xs">
+                              Color
+                            </Label>
+                            <div className="flex gap-2">
+                              <div
+                                className="w-8 h-8 rounded border"
+                                style={{ backgroundColor: canvasElements[selectedElement]?.color }}
+                              />
+                              <Input
+                                id="element-color"
+                                value={canvasElements[selectedElement]?.color}
+                                onChange={() => {}}
+                                className="h-8 flex-1"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-muted-foreground">Select an element to edit its properties</div>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Layers</h3>
+                      <div className="border rounded-md overflow-hidden">
+                        {canvasElements.length > 0 ? (
+                          <div className="max-h-[200px] overflow-y-auto">
+                            {canvasElements.map((element, index) => (
+                              <div
+                                key={index}
+                                className={`flex items-center p-2 text-sm hover:bg-muted cursor-pointer ${
+                                  selectedElement === index ? "bg-muted" : ""
+                                }`}
+                                onClick={() => setSelectedElement(index)}
+                              >
+                                <div className="w-3 h-3 rounded-sm mr-2" style={{ backgroundColor: element.color }} />
+                                {element.name}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-4 text-center text-sm text-muted-foreground">No elements added yet</div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-8 text-center">
-                    <Button asChild variant="outline">
-                      <Link href="/gallery">
-                        View Full Portfolio
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
+                </TabsContent>
+
+                <TabsContent value="code" className="mt-0 h-full">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Code Editor</h3>
+                      <div className="border rounded-md overflow-hidden">
+                        <div className="bg-muted p-2 text-xs border-b flex justify-between">
+                          <span>main.js</span>
+                          <div className="flex gap-1">
+                            <button className="hover:text-primary">
+                              <Code className="h-3 w-3" />
+                            </button>
+                            <button className="hover:text-primary">
+                              <Download className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+                        <Textarea
+                          className="font-mono text-xs border-0 resize-none h-[300px]"
+                          value={`// RYPTO TEC Studio Code
+// Generated JavaScript
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// Initialize elements
+const elements = ${JSON.stringify(canvasElements, null, 2)};
+
+// Render function
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw elements
+  elements.forEach(element => {
+    ctx.fillStyle = element.color;
+    ctx.fillRect(
+      element.x, 
+      element.y, 
+      element.width, 
+      element.height
+    );
+  });
+  
+  requestAnimationFrame(render);
+}
+
+// Start rendering
+render();`}
+                          readOnly
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Export Options</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" size="sm">
+                          <Download className="h-4 w-4 mr-2" />
+                          Export JS
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Download className="h-4 w-4 mr-2" />
+                          Export HTML
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="ai" className="mt-0 h-full">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">AI Assistant</h3>
+                      <div className="border rounded-md p-3">
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Describe what you want to create and our AI will help generate it.
+                        </p>
+                        <Textarea placeholder="Describe your design or code needs..." className="resize-none mb-3" />
+                        <Button className="w-full">
+                          <Wand2 className="h-4 w-4 mr-2" />
+                          Generate with AI
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">AI Features</h3>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                            <span className="text-sm">Smart Layout</span>
+                          </div>
+                          <Switch checked={true} />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-primary" />
+                            <span className="text-sm">Code Generation</span>
+                          </div>
+                          <Switch checked={true} />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Palette className="h-4 w-4 text-primary" />
+                            <span className="text-sm">Color Suggestions</span>
+                          </div>
+                          <Switch checked={true} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+              </div>
+            </Tabs>
+          </Card>
+
+          {/* Main canvas area */}
+          <Card className="lg:col-span-9 h-[calc(100vh-200px)] flex flex-col">
+            <CardHeader className="pb-2 border-b flex-shrink-0">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Canvas</CardTitle>
+                  <CardDescription>Design preview</CardDescription>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="theme-toggle" className="text-sm">
+                      Theme:
+                    </Label>
+                    <Select value={theme} onValueChange={setTheme}>
+                      <SelectTrigger className="w-[100px] h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">Light</SelectItem>
+                        <SelectItem value="dark">Dark</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex gap-1">
+                    <Button variant="outline" size="icon" onClick={togglePlay}>
+                      {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={resetCanvas}>
+                      <RotateCcw className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon">
+                      <Save className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon">
+                      <Share2 className="h-4 w-4" />
                     </Button>
                   </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </div>
-        </div>
-      </section>
+                </div>
+              </div>
+            </CardHeader>
 
-      {/* Equipment Section */}
-      <section className="py-12 md:py-24" ref={ref3}>
-        <div className="container px-4 md:px-6">
-          <motion.div
-            className="mx-auto max-w-3xl space-y-4 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView3 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl" title="Our Equipment">
-              Our Equipment
-            </h2>
-            <p className="text-muted-foreground md:text-lg">
-              We use professional-grade equipment to ensure the highest quality production.
-            </p>
-          </motion.div>
+            <CardContent className="flex-1 p-0 relative overflow-hidden">
+              <ScaleOnScroll className="w-full h-full flex items-center justify-center p-6">
+                <div
+                  className={`relative border rounded-lg shadow-sm overflow-hidden ${
+                    theme === "dark" ? "bg-gray-900" : "bg-white"
+                  }`}
+                >
+                  <canvas ref={canvasRef} width={800} height={500} className="touch-none" />
 
-          <div className="mt-12">
-            <Tabs defaultValue="cameras" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
-                <TabsTrigger value="cameras" title="Cameras">
-                  Cameras
-                </TabsTrigger>
-                <TabsTrigger value="lenses" title="Lenses">
-                  Lenses
-                </TabsTrigger>
-                <TabsTrigger value="lighting" title="Lighting">
-                  Lighting
-                </TabsTrigger>
-                <TabsTrigger value="audio" title="Audio">
-                  Audio
-                </TabsTrigger>
-                <TabsTrigger value="software" title="Software">
-                  Software
-                </TabsTrigger>
-              </TabsList>
+                  {canvasElements.length === 0 && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                      <Layers className="h-12 w-12 text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-medium mb-2">Your Canvas is Empty</h3>
+                      <p className="text-muted-foreground mb-4 max-w-md">
+                        Start by adding elements from the tools panel or use our AI assistant to generate a design.
+                      </p>
+                      <Button onClick={addElement}>
+                        <Layers className="h-4 w-4 mr-2" />
+                        Add Your First Element
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </ScaleOnScroll>
+            </CardContent>
 
-              {Object.entries(equipmentList).map(([category, items]) => (
-                <TabsContent key={category} value={category} className="mt-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="capitalize">{category} Equipment</CardTitle>
-                      <CardDescription>
-                        Professional-grade {category} equipment for high-quality production.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {items.map((item, index) => (
-                          <motion.li
-                            key={index}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={isInView3 ? { opacity: 1, x: 0 } : {}}
-                            transition={{ duration: 0.4, delay: 0.05 * index }}
-                            className="flex items-center"
-                          >
-                            <ArrowRight className="mr-2 h-4 w-4 text-primary" />
-                            <span>{item}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </div>
-        </div>
-      </section>
+            <CardFooter className="border-t flex-shrink-0">
+              <div className="flex justify-between items-center w-full">
+                <div className="text-sm text-muted-foreground">{canvasElements.length} elements • Canvas: 800×500</div>
 
-      {/* Process Section */}
-      <section className="py-12 md:py-24 bg-muted/50">
-        <div className="container px-4 md:px-6">
-          <div className="mx-auto max-w-3xl space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl" title="Our Process">
-              Our Process
-            </h2>
-            <p className="text-muted-foreground md:text-lg">
-              We follow a structured process to ensure your project is delivered on time and exceeds expectations.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                step: "01",
-                title: "Discovery",
-                description:
-                  "We start by understanding your vision, goals, and requirements through in-depth consultation.",
-              },
-              {
-                step: "02",
-                title: "Pre-Production",
-                description:
-                  "We develop concepts, scripts, storyboards, and production plans to prepare for your project.",
-              },
-              {
-                step: "03",
-                title: "Production",
-                description: "Our team executes the project using professional equipment and creative expertise.",
-              },
-              {
-                step: "04",
-                title: "Post-Production",
-                description:
-                  "We edit, refine, and enhance your project with color grading, sound design, and visual effects.",
-              },
-            ].map((process, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                className="relative"
-              >
-                <Card className="h-full">
-                  <CardHeader>
-                    <div className="text-4xl font-bold text-primary/20">{process.step}</div>
-                    <CardTitle className="mt-2">{process.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>{process.description}</CardDescription>
-                  </CardContent>
-                </Card>
-                {index < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
-                    <ArrowRight className="h-6 w-6 text-primary" />
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="zoom" className="text-sm">
+                      Zoom:
+                    </Label>
+                    <Slider id="zoom" defaultValue={[100]} max={200} min={50} step={10} className="w-32" />
+                    <span className="text-sm w-10">100%</span>
                   </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="py-12 md:py-24">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Ready to bring your vision to life?</h2>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                Let's collaborate to create stunning visual content that captivates your audience.
-              </p>
-            </div>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Button asChild size="lg">
-                <Link href="/contact">
-                  Start Your Project
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
+                  <Button>
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </Button>
+                </div>
+              </div>
+            </CardFooter>
+          </Card>
         </div>
-      </section>
-    </div>
+      </div>
+    </main>
   )
 }

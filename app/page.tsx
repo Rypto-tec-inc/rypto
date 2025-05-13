@@ -1,304 +1,124 @@
 "use client"
 
-import type React from "react"
-
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import Link from "next/link"
-import { motion, useInView } from "framer-motion"
-import { ArrowRight, Code, Cpu, ExternalLink, Layers, Zap } from "lucide-react"
+import Image from "next/image"
+import { motion } from "framer-motion"
+import { ArrowRight, Play, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import CodeAnimation from "@/components/animations/code-animation"
-import ComputerAnimation from "@/components/animations/computer-animation"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge as UIBadge } from "@/components/ui/badge"
 import { Popup } from "@/components/ui/popup"
 import { useToast } from "@/hooks/use-toast"
+import Barcode from "@/components/barcode"
+import AISuggestions from "@/components/ai-suggestions"
 
 export default function Home() {
   const { toast } = useToast()
-  const ref1 = useRef(null)
-  const ref2 = useRef(null)
-  const ref3 = useRef(null)
-  const isInView1 = useInView(ref1, { once: true, margin: "-100px" })
-  const isInView2 = useInView(ref2, { once: true, margin: "-100px" })
-  const isInView3 = useInView(ref3, { once: true, margin: "-100px" })
+  const mainRef = useRef(null)
+  const section1Ref = useRef(null)
+  const section2Ref = useRef(null)
+  const section3Ref = useRef(null)
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    toast({
-      title: "Subscribed!",
-      description: "Thank you for subscribing to our newsletter.",
-    })
+  const [activeImage, setActiveImage] = useState(0)
+  const [showDemo, setShowDemo] = useState(false)
+
+  // Auto rotate hero images
+  useState(() => {
+    const interval = setInterval(() => {
+      setActiveImage((prev) => (prev + 1) % heroImages.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  })
+
+  const nextImage = () => {
+    setActiveImage((prev) => (prev + 1) % heroImages.length)
   }
 
+  const prevImage = () => {
+    setActiveImage((prev) => (prev - 1 + heroImages.length) % heroImages.length)
+  }
+
+  const heroImages = [
+    {
+      src: "/placeholder.svg?height=600&width=800",
+      alt: "RYPTO TEC Software Development",
+      title: "Advanced Software Solutions",
+      description: "Custom software development tailored to your business needs",
+    },
+    {
+      src: "/placeholder.svg?height=600&width=800",
+      alt: "RYPTO TEC Animation Studio",
+      title: "Creative Animation",
+      description: "Bringing ideas to life through stunning animations",
+    },
+    {
+      src: "/placeholder.svg?height=600&width=800",
+      alt: "RYPTO TEC VR Experience",
+      title: "Immersive Experiences",
+      description: "Virtual and augmented reality solutions for the future",
+    },
+    {
+      src: "/placeholder.svg?height=600&width=800",
+      alt: "RYPTO TEC Team Collaboration",
+      title: "Expert Team",
+      description: "Talented professionals dedicated to excellence",
+    },
+  ]
+
   return (
-    <div className="flex flex-col">
+    <div ref={mainRef} className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-br from-background to-muted/20">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+      <section className="relative min-h-screen flex items-center py-20 md:py-32 overflow-hidden">
+        <div className="container px-4 md:px-6 relative z-10">
+          <div className="grid gap-12 lg:grid-cols-2 xl:grid-cols-2">
             <motion.div
-              className="order-2 lg:order-1 flex flex-col space-y-6"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <div className="space-y-4">
-                <div className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
-                  Innovative Tech Solutions
-                </div>
-                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl xl:text-6xl">
-                  Transforming Ideas Into
-                  <span className="block text-primary">Impactful Digital Experiences</span>
-                </h1>
-                <p className="text-lg text-muted-foreground max-w-xl">
-                  At RYPTO TEC INC, we blend cutting-edge technologies with creative vision to deliver
-                  transformative solutions that push the boundaries of what's possible.
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="w-full sm:w-auto">
-                  <Link href="/contact">
-                    Explore Our Solutions
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="w-full sm:w-auto"
-                  onClick={() => window.open('/demo', '_blank')}
-                >
-                  View Case Studies
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </motion.div>
-            <motion.div
-              className="order-1 lg:order-2 flex items-center justify-center"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            >
-              <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
-                <ComputerAnimation />
-              </div>
-            </motion.div>
-          </div>
-        </div>
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/50 to-transparent pointer-events-none" />
-      </section>
-
-      {/* Glassy Video Showcase Section */}
-      <section className="relative py-20 md:py-32 bg-transparent">
-        <div className="container relative z-10 px-4 md:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-6xl mx-auto"
-          >
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-3xl opacity-30 group-hover:opacity-50 blur-xl transition-all duration-500"></div>
-              
-              <div className="relative bg-white/10 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-                <div className="aspect-video w-full">
-                  <video
-                    src="/video/animation_studio.mp4"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    controls
-                    title="Rypto Creative Showcase"
-                  />
-                </div>
-                
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-black/20 backdrop-blur-sm">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white mb-2">Rypto Creative Showcase</h3>
-                      <p className="text-white/70 text-sm">
-                        Exploring the intersection of technology and creative expression
-                      </p>
-                    </div>
-                    <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full flex items-center transition-colors">
-                      Explore
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section className="py-12 md:py-24" ref={ref1}>
-        <div className="container px-4 md:px-6">
-          <motion.div
-            className="flex flex-col items-start gap-4 md:flex-row md:justify-between"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView1 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex-1">
-              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Our Services</div>
-              <h2 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">
-                Cutting-edge solutions for modern challenges
-              </h2>
-            </div>
-            <div className="flex-1 md:max-w-md">
-              <p className="text-muted-foreground">
-                We leverage a modern and dynamic tech stack to build scalable, efficient, and user-centric solutions
-                across various industries.
-              </p>
-            </div>
-          </motion.div>
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                icon: <Code className="h-10 w-10" />,
-                title: "Frontend Development",
-                description:
-                  "Next.js, React, Tailwind CSS, and Vite for building fast, responsive, and user-friendly interfaces.",
-              },
-              {
-                icon: <Cpu className="h-10 w-10" />,
-                title: "Backend Development",
-                description: "Node.js, Express, and MongoDB for creating robust and scalable server-side applications.",
-              },
-              {
-                icon: <Layers className="h-10 w-10" />,
-                title: "3D and Animation",
-                description: "Blender, Three.js, and other advanced tools to create immersive digital experiences.",
-              },
-              {
-                icon: <Zap className="h-10 w-10" />,
-                title: "VR/AR Technologies",
-                description: "Unity, A-Frame, and WebXR for delivering next-level immersive experiences.",
-              },
-            ].map((service, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView1 ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-              >
-                <Popup
-                  trigger={
-                    <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg">
-                      <CardHeader>
-                        <div className="mb-2 text-primary">{service.icon}</div>
-                        <CardTitle>{service.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <CardDescription>{service.description}</CardDescription>
-                      </CardContent>
-                    </Card>
-                  }
-                  title={service.title}
-                >
-                  <div className="space-y-4">
-                    <p>{service.description}</p>
-                    <h3 className="text-lg font-medium">Technologies we use:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {service.title === "Frontend Development" && (
-                        <>
-                          <li>Next.js for server-side rendering and static site generation</li>
-                          <li>React for building interactive user interfaces</li>
-                          <li>Tailwind CSS for rapid UI development</li>
-                          <li>Framer Motion for smooth animations</li>
-                          <li>TypeScript for type safety</li>
-                        </>
-                      )}
-                      {service.title === "Backend Development" && (
-                        <>
-                          <li>Node.js for server-side JavaScript</li>
-                          <li>Express for API development</li>
-                          <li>MongoDB for flexible data storage</li>
-                          <li>PostgreSQL for relational data</li>
-                          <li>GraphQL for efficient data fetching</li>
-                        </>
-                      )}
-                      {service.title === "3D and Animation" && (
-                        <>
-                          <li>Blender for 3D modeling and animation</li>
-                          <li>Three.js for web-based 3D rendering</li>
-                          <li>GSAP for advanced animations</li>
-                          <li>WebGL for hardware-accelerated graphics</li>
-                          <li>Cinema 4D for professional 3D content</li>
-                        </>
-                      )}
-                      {service.title === "VR/AR Technologies" && (
-                        <>
-                          <li>Unity for cross-platform VR/AR development</li>
-                          <li>A-Frame for web-based VR experiences</li>
-                          <li>WebXR for immersive web applications</li>
-                          <li>ARKit and ARCore for mobile AR</li>
-                          <li>Oculus SDK for VR headset integration</li>
-                        </>
-                      )}
-                    </ul>
-                    <div className="pt-4">
-                      <Button asChild>
-                        <Link href="/services">
-                          Learn More
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                </Popup>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Code Animation Section */}
-      <section className="py-12 md:py-24 bg-muted/50">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
-            <motion.div
-              className="flex flex-col justify-center space-y-4"
+              className="flex flex-col justify-center space-y-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Cutting-edge Development</h2>
-                <p className="text-muted-foreground">
-                  Our team of expert developers creates clean, efficient, and scalable code using the latest
-                  technologies and best practices.
+                <div className="flex items-center space-x-2 mb-4">
+                  <Barcode value="RYPTO-TEC-2023" width={120} height={30} />
+                  <UIBadge variant="outline" className="text-xs">
+                    EST. 2023
+                  </UIBadge>
+                </div>
+                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl/none">
+                  Transforming Ideas Into Impactful Solutions
+                </h1>
+                <p className="max-w-[600px] text-muted-foreground md:text-xl mt-4">
+                  RYPTO TEC INC is a forward-thinking technology company founded in 2023 by Victor Edet Coleman,
+                  specializing in software engineering, animation, and emerging technologies.
                 </p>
-                <ul className="space-y-2 mt-4">
-                  <li className="flex items-start">
-                    <ArrowRight className="mr-2 h-4 w-4 mt-1 text-primary" />
-                    <span>Modern JavaScript frameworks and libraries</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ArrowRight className="mr-2 h-4 w-4 mt-1 text-primary" />
-                    <span>Type-safe development with TypeScript</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ArrowRight className="mr-2 h-4 w-4 mt-1 text-primary" />
-                    <span>Responsive and accessible web applications</span>
-                  </li>
-                  <li className="flex items-start">
-                    <ArrowRight className="mr-2 h-4 w-4 mt-1 text-primary" />
-                    <span>Optimized performance and SEO</span>
-                  </li>
-                </ul>
               </div>
-              <div className="pt-4">
-                <Button asChild>
-                  <Link href="/services">
-                    Explore Our Services
+              <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/contact">
+                    Get Started
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
+                <Popup
+                  trigger={
+                    <Button variant="outline" size="lg">
+                      Watch Demo
+                      <Play className="ml-2 h-4 w-4" />
+                    </Button>
+                  }
+                  title="RYPTO TEC Demo"
+                  size="lg"
+                >
+                  <div className="video-container">
+                    <iframe
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                      title="RYPTO TEC Demo"
+                      className="w-full h-full"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </Popup>
               </div>
             </motion.div>
             <motion.div
@@ -307,140 +127,352 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <CodeAnimation />
+              <div className="relative w-full aspect-[4/3] rounded-none overflow-hidden border border-border">
+                {/* Hero image carousel */}
+                <div className="absolute inset-0">
+                  {heroImages.map((image, index) => (
+                    <motion.div
+                      key={index}
+                      className="absolute inset-0"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: index === activeImage ? 1 : 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Image src={image.src || "/placeholder.svg"} alt={image.alt} fill className="object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 className="text-xl font-bold text-white">{image.title}</h3>
+                        <p className="text-sm text-white/80">{image.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Image navigation */}
+                <div className="absolute inset-y-0 left-0 flex items-center">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={prevImage}
+                    className="ml-2 bg-black/20 hover:bg-black/40 text-white"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </Button>
+                </div>
+                <div className="absolute inset-y-0 right-0 flex items-center">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={nextImage}
+                    className="mr-2 bg-black/20 hover:bg-black/40 text-white"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </Button>
+                </div>
+
+                {/* Image controls */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                  {heroImages.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === activeImage ? "w-6 bg-white" : "bg-white/40"
+                      }`}
+                      onClick={() => setActiveImage(index)}
+                    />
+                  ))}
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="py-12 md:py-24" ref={ref2}>
-        <div className="container px-4 md:px-6">
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView2 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Work more, but 6x faster</h2>
-            <p className="mt-4 text-xl text-muted-foreground">Save hours with our components</p>
-          </motion.div>
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { value: "59%", description: "Work with precision, apply to improve your productivity" },
-              { value: "350+", description: "Web Design sections in dark and light mode" },
-              { value: "100+", description: "Work with innovation, apply to improve your productivity" },
-              { value: "59%", description: "Work with precision, apply to improve your productivity" },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                className="flex flex-col items-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView2 ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-              >
-                <div className="text-4xl font-bold">{stat.value}</div>
-                <p className="mt-2 text-center text-sm text-muted-foreground">{stat.description}</p>
-              </motion.div>
-            ))}
+        {/* Background elements */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute inset-0 grid-pattern opacity-5"></div>
+          <div className="absolute top-0 left-0 w-full h-full opacity-5">
+            <Image
+              src="/general_pic/r.jpg"
+              alt="Background pattern"
+              fill
+              className="object-cover"
+            />
           </div>
         </div>
       </section>
 
-      {/* Projects Section */}
-      <section className="py-12 md:py-24" ref={ref3}>
+      {/* Section 01 */}
+      <section ref={section1Ref} className="py-24 md:py-32">
         <div className="container px-4 md:px-6">
-          <motion.div
-            className="flex flex-col items-start gap-4 md:flex-row md:justify-between"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView3 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex-1">
-              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Our Work</div>
-              <h2 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">Explore our work</h2>
+          <div className="flex flex-col md:flex-row gap-12">
+            <div className="md:w-1/3">
+              <div className="text-8xl font-bold tracking-tighter">01</div>
+              <h2 className="text-3xl font-bold mt-4">Unlocking the opportunity</h2>
+              <p className="text-muted-foreground mt-2">Business strategy</p>
             </div>
-            <div className="flex-1 md:max-w-md">
-              <p className="text-muted-foreground">
+
+            <div className="md:w-2/3 space-y-6">
+              <p>
+                Our projects always begin by gaining a deep understanding of your business goals, customer needs,
+                applicable technologies, the surrounding space, and team structure. We meet in person with key
+                stakeholders—executives, engineers, data scientists, product owners—to immerse ourselves in your world.
+              </p>
+              <p>
+                Our qualitative inquiry unlocks insights, opportunities, and solutions businesses typically haven't
+                considered, and resulting personas ensure we empathize with the people we're designing for. We land on
+                an informed hypothesis about where to focus the work to ensure the end product is feasible to build
+                based on your team's strengths, is user-friendly and beautiful, and drives adoption and scale.
+              </p>
+
+              <div className="mt-8 space-y-4">
+                <h3 className="text-sm font-medium uppercase text-muted-foreground">Outputs include</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Insights from qualitative and quantitative user research</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Personas for current and future users</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Data-driven hypothesis on where to focus</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>
+                      Recommendation on how to best leverage emerging technology (and address technology constraints)
+                      for desired outcome
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>KPIs and success metrics</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 02 */}
+      <section ref={section2Ref} className="py-24 md:py-32 bg-muted/10">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col md:flex-row gap-12">
+            <div className="md:w-1/3">
+              <div className="text-8xl font-bold tracking-tighter">02</div>
+              <h2 className="text-3xl font-bold mt-4">Crafting the solution</h2>
+              <p className="text-muted-foreground mt-2">Design & development</p>
+            </div>
+
+            <div className="md:w-2/3 space-y-6">
+              <p>
+                With a clear understanding of the opportunity, we move into the design and development phase. Our
+                multidisciplinary team of designers, developers, and strategists work collaboratively to create
+                solutions that are both visually stunning and technically robust.
+              </p>
+              <p>
+                We follow a user-centered design approach, constantly testing and iterating based on feedback. Our
+                development process emphasizes clean, maintainable code and scalable architecture to ensure your
+                solution can grow with your business.
+              </p>
+
+              <div className="mt-8 space-y-4">
+                <h3 className="text-sm font-medium uppercase text-muted-foreground">Outputs include</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>User experience flows and wireframes</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Visual design system and UI components</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Functional prototypes for user testing</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Production-ready code and technical documentation</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Quality assurance and performance testing</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 03 */}
+      <section ref={section3Ref} className="py-24 md:py-32">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col md:flex-row gap-12">
+            <div className="md:w-1/3">
+              <div className="text-8xl font-bold tracking-tighter">03</div>
+              <h2 className="text-3xl font-bold mt-4">Delivering impact</h2>
+              <p className="text-muted-foreground mt-2">Implementation & growth</p>
+            </div>
+
+            <div className="md:w-2/3 space-y-6">
+              <p>
+                Launching a product is just the beginning. We work closely with your team to ensure successful
+                implementation, adoption, and continuous improvement. Our approach focuses on measuring impact against
+                the defined KPIs and making data-driven decisions for future enhancements.
+              </p>
+              <p>
+                We provide comprehensive training and documentation to ensure your team can maintain and evolve the
+                solution independently. For clients who prefer ongoing support, we offer flexible maintenance and growth
+                packages tailored to your specific needs.
+              </p>
+
+              <div className="mt-8 space-y-4">
+                <h3 className="text-sm font-medium uppercase text-muted-foreground">Outputs include</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Launch strategy and implementation plan</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>User onboarding and training materials</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Analytics implementation and performance dashboards</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Post-launch optimization recommendations</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Growth roadmap and scaling strategy</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Projects Section */}
+      <section className="py-24 md:py-32 bg-muted/10">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col md:flex-row gap-12 mb-12">
+            <div className="md:w-1/3">
+              <div className="text-8xl font-bold tracking-tighter">04</div>
+              <h2 className="text-3xl font-bold mt-4">Featured work</h2>
+              <p className="text-muted-foreground mt-2">Selected projects</p>
+            </div>
+
+            <div className="md:w-2/3">
+              <p className="text-xl">
                 Where creativity seamlessly meets purpose, pushing boundaries and transforming ideas into impactful
                 experiences.
               </p>
             </div>
-          </motion.div>
-          <div className="mt-12">
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2">
+            {[
+              {
+                id: 1,
+                title: "VR Architectural Visualization",
+                description:
+                  "An immersive virtual reality experience allowing clients to explore architectural designs before construction begins.",
+                image: "/placeholder.svg?height=400&width=600",
+                category: "vr",
+                code: "RYPT-2023-001",
+              },
+              {
+                id: 2,
+                title: "E-Commerce Platform",
+                description:
+                  "A scalable e-commerce solution with advanced product filtering and secure payment processing.",
+                image: "/placeholder.svg?height=400&width=600",
+                category: "software",
+                code: "RYPT-2023-002",
+              },
+            ].map((project) => (
               <motion.div
-                className="group relative overflow-hidden rounded-lg border"
+                key={project.id}
+                className="group relative"
                 initial={{ opacity: 0, y: 20 }}
-                animate={isInView3 ? { opacity: 1, y: 0 } : {}}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
+                whileHover={{ y: -5 }}
               >
-                <div className="aspect-video overflow-hidden">
-                  <div className="h-full w-full bg-muted"></div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold">Project 01</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Coming soon. Our first project showcase will be available here.
-                  </p>
-                </div>
+                <Card className="overflow-hidden rounded-none border-border/10 bg-background/50 hover:bg-background transition-colors duration-300">
+                  <div className="aspect-video overflow-hidden">
+                    <Image
+                      src={project.image || "/placeholder.svg"}
+                      alt={project.title}
+                      width={600}
+                      height={400}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-bold">{project.title}</h3>
+                      <Barcode value={project.code} width={60} height={20} />
+                    </div>
+                    <p className="mt-2 text-sm text-muted-foreground">{project.description}</p>
+                    <div className="mt-4">
+                      <Button asChild variant="outline" size="sm">
+                        <Link href="/work">
+                          View Project
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
-            </div>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <Button asChild variant="outline">
+              <Link href="/work">
+                View All Projects
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 md:py-24 bg-muted/50">
+      <section className="py-24 md:py-32">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
+            <div className="space-y-2 max-w-3xl">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Ready to transform your ideas?</h2>
               <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
                 Let's collaborate to create innovative solutions that redefine industries and improve lives.
               </p>
             </div>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Button asChild size="lg">
+            <div className="pt-4">
+              <Button asChild variant="outline" size="lg">
                 <Link href="/contact">
                   Get in Touch
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-
-              <Popup
-                trigger={
-                  <Button variant="outline" size="lg">
-                    Subscribe to Newsletter
-                  </Button>
-                }
-                title="Subscribe to Our Newsletter"
-              >
-                <div className="space-y-4">
-                  <p>Stay updated with the latest news, projects, and innovations from RYPTO TEC INC.</p>
-                  <form onSubmit={handleNewsletterSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium">
-                        Email
-                      </label>
-                      <input
-                        id="email"
-                        type="email"
-                        placeholder="your@email.com"
-                        className="w-full rounded-md border border-input bg-background px-3 py-2"
-                        required
-                      />
-                    </div>
-                    <Button type="submit" className="w-full">
-                      Subscribe
-                    </Button>
-                  </form>
-                </div>
-              </Popup>
             </div>
           </div>
         </div>
       </section>
+
+      {/* AI Suggestions */}
+      <AISuggestions currentPage="home" />
     </div>
   )
 }
