@@ -26,121 +26,144 @@ import {
 // Project data
 const projectsData = [
   {
-    id: 3,
-    title: "RYPTO QR Code Generator",
-    description: "A powerful QR code generation tool built as an in-house software solution. Create customized QR codes for various purposes with advanced features and styling options.",
-    image: "/work/qrcode-gen.png",
-    categories: ["Web Development", "QR Code", "Tool", "In-house"],
-    client: "RYPTO TEC INC",
-    year: "2025",
-    featured: true,
-    projectCode: "RYPT-2025-002",
-    gallery: [
-      "/work/qrcode-gen.png"
-    ],
-    duration: "2 months (March 1, 2025 - April 30, 2025)",
-    contributors: [{
-      name: "Victor Edet Coleman",
-      role: "Lead Developer",
-      image: "/team/victor.jpg",
-      profileUrl: "/team#victor"
-    }],
-    projectUrl: "https://rypto-qrcode-genx.vercel.app",
-    technologies: [
-      "Next.js 14",
-      "React 18",
-      "TypeScript",
-      "Tailwind CSS",
-      "QR Code API",
-      "Vercel"
-    ],
-    features: [
-      "Custom QR code generation",
-      "Multiple QR code styles",
-      "Download in various formats",
-      "Real-time preview",
-      "Mobile responsive design"
+    id: "1",
+    title: "Orange DSM Website Redesign",
+    description: "Complete overhaul of Orange DSM's digital presence with modern design and enhanced user experience.",
+    image: "/work/orange-dsm.jpg",
+    categories: ["Web Development", "UI/UX Design"],
+    year: 2023,
+    client: "Orange DSM",
+    team: [
+      {
+        name: "Victor Edet Coleman",
+        role: "Lead Developer",
+        image: "/Team/victor.jpg",
+        profileUrl: "/team"
+      }
     ],
     testimonial: {
-      quote: "Our QR Code Generator has become an essential tool for our team and clients, streamlining the process of creating professional QR codes.",
-      author: "RYPTO TEC INC",
-      position: "Development Team"
-    }
+      quote: "The new website perfectly represents our brand and has significantly improved our online presence.",
+      author: "Orange DSM",
+      position: "Management Team"
+    },
+    videoUrl: ""
   },
   {
-  id: 1,
-  title: "VR Architectural Visualization",
-  description:
-    "An immersive virtual reality experience allowing clients to explore architectural designs before construction begins.",
-  image: "/placeholder.svg?height=600&width=800",
-  categories: ["VR/AR", "3D Modeling", "Interactive"],
-  client: "Modern Architects Inc.",
-  year: "2023",
-  featured: true,
-  projectCode: "RYPT-2023-001",
-  gallery: [
-    "/placeholder.svg?height=600&width=800",
-    "/placeholder.svg?height=600&width=800",
-    "/placeholder.svg?height=600&width=800",
-  ],
-  duration: "4 months",
-  team: ["Project Manager", "VR Developer", "3D Artist", "UI/UX Designer"],
-  technologies: ["Unity", "Blender", "Oculus SDK", "C#"],
-  challenges:
-    "One of the main challenges was optimizing the 3D models and textures to maintain high visual fidelity while ensuring smooth performance in VR. We implemented various optimization techniques, including LOD (Level of Detail) systems, texture atlasing, and occlusion culling to achieve the desired balance between visual quality and performance.",
-  results:
-    "The VR experience has significantly improved the client's design review process, reducing the need for physical mockups and allowing for faster iteration on design changes. Stakeholders can now make more informed decisions earlier in the design process, leading to cost savings and improved client satisfaction.",
-  testimonial: {
-    quote:
-      "The VR experience created by RYPTO TEC INC has transformed how we present designs to our clients. It's an invaluable tool that has improved our design process and client satisfaction.",
-    author: "John Smith",
-    position: "Design Director, Modern Architects Inc.",
+    id: "2",
+    title: "Zig Insurance Platform",
+    description: "Development of a comprehensive insurance management platform with real-time analytics.",
+    image: "/work/zig-insurance.jpg",
+    categories: ["Software Development", "FinTech"],
+    year: 2023,
+    client: "Zig Insurance",
+    team: [
+      {
+        name: "Victor Edet Coleman",
+        role: "Lead Developer",
+        image: "/Team/victor.jpg",
+        profileUrl: "/team"
+      }
+    ],
+    testimonial: {
+      quote: "RYPTO delivered a robust platform that transformed our operations.",
+      author: "Zig Insurance",
+      position: "CTO"
+    },
+    videoUrl: ""
   },
-  videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-},
-{
-  id: 2,
-  title: "Sherman Resources Website",
-  description: "A modern, responsive website for Sherman Resources built with Next.js 14, featuring server-side rendering, dynamic routing, and a beautiful user interface designed with Tailwind CSS.",
-  image: "/work/sherman_resources.png",
-  categories: ["Web Development", "Next.js", "React", "Frontend"],
-  client: "Sherman Resources",
-  year: "2025",
-  featured: true,
-  projectCode: "RYPT-2025-001",
-  gallery: [
-    "/work/sherman_resources.png"
-  ],
-  duration: "1.5 months (April 20, 2025 - May 30, 2025)",
-  contributors: [{
-    name: "Victor Edet Coleman",
-    role: "Lead Developer",
-    image: "/team/victor.jpg",
-    profileUrl: "/team#victor",
-    contribution: "Full-stack development, UI/UX implementation, and deployment"
-  }],
-  technologies: [
-    "Next.js 14",
-    "React 18",
-    "TypeScript 5",
-    "Tailwind CSS 3",
-    "Framer Motion",
-    "Vercel"
-  ],
-  stack: {
-    frontend: ["React", "TypeScript", "Tailwind CSS", "Framer Motion"],
-    backend: ["Next.js API Routes", "Server Components", "Server Actions"],
-    deployment: ["Vercel", "CI/CD Pipeline"]
+  {
+    id: "3",
+    title: "Liberia Tech Hub",
+    description: "Creation of a digital platform connecting tech professionals and opportunities in Liberia.",
+    image: "/work/liberia-tech.jpg",
+    categories: ["Web Development", "Community Platform"],
+    year: 2023,
+    client: "Liberia Tech Foundation",
+    team: [
+      {
+        name: "Victor Edet Coleman",
+        role: "Lead Developer",
+        image: "/Team/victor.jpg",
+        profileUrl: "/team"
+      }
+    ],
+    testimonial: {
+      quote: "A game-changing platform for Liberia's tech ecosystem.",
+      author: "Liberia Tech Foundation",
+      position: "Director"
+    },
+    videoUrl: ""
   },
-  challenges: "The project required building a high-performance website with excellent SEO capabilities. We leveraged Next.js 14's app router and server components for optimal performance, implemented responsive design patterns, and ensured accessibility compliance. The site features dynamic content loading, optimized images, and smooth animations using Framer Motion.",
-  results: "Successfully delivered a modern, fast-loading website at https://v0-sherman-resources-website.vercel.app/. The site achieved excellent Core Web Vitals scores, features server-side rendering for SEO optimization, and provides an engaging user experience across all devices.",
-  testimonial: {
-    quote: "The new website perfectly represents our brand and has significantly improved our online presence.",
-    author: "Sherman Resources",
-    position: "Management Team"
+  {
+    id: "4",
+    title: "3D Product Visualization",
+    description: "Interactive 3D product visualization for a leading retail brand.",
+    image: "/work/3d-visualization.jpg",
+    categories: ["3D Animation", "Web Development"],
+    year: 2023,
+    client: "Retail Brand",
+    team: [
+      {
+        name: "Victor Edet Coleman",
+        role: "Lead Developer & 3D Artist",
+        image: "/Team/victor.jpg",
+        profileUrl: "/team"
+      }
+    ],
+    testimonial: {
+      quote: "The 3D visualization has revolutionized our online shopping experience.",
+      author: "Retail Brand",
+      position: "Digital Director"
+    },
+    videoUrl: ""
   },
-  videoUrl: ""
-}]
+  {
+    id: "5",
+    title: "Educational VR Platform",
+    description: "Virtual reality platform for immersive learning experiences.",
+    image: "/work/edu-vr.jpg",
+    categories: ["VR Development", "Education"],
+    year: 2023,
+    client: "Education Ministry",
+    team: [
+      {
+        name: "Victor Edet Coleman",
+        role: "Lead Developer & 3D Artist",
+        image: "/Team/victor.jpg",
+        profileUrl: "/team"
+      }
+    ],
+    testimonial: {
+      quote: "An innovative approach to education that engages students like never before.",
+      author: "Education Ministry",
+      position: "Director of Innovation"
+    },
+    videoUrl: ""
+  },
+  {
+    id: "6",
+    title: "Smart City Dashboard",
+    description: "Real-time monitoring and analytics dashboard for urban infrastructure.",
+    image: "/work/smart-city.jpg",
+    categories: ["Software Development", "Data Visualization"],
+    year: 2023,
+    client: "City Administration",
+    team: [
+      {
+        name: "Victor Edet Coleman",
+        role: "Lead Developer",
+        image: "/Team/victor.jpg",
+        profileUrl: "/team"
+      }
+    ],
+    testimonial: {
+      quote: "The dashboard has transformed how we manage city resources.",
+      author: "City Administration",
+      position: "Technology Director"
+    },
+    videoUrl: ""
+  }
+]
 
 // Extract all unique categories
 const allCategories = Array.from(new Set(projectsData.flatMap(project => project.categories))).sort()
@@ -231,30 +254,30 @@ const ProjectCard = ({ project, viewMode = 'grid' }: { project: any, viewMode?: 
           </div>
 
           {/* Contributors */}
-          {project.contributors && project.contributors.length > 0 && (
+          {project.team && project.team.length > 0 && (
             <div className="flex items-center gap-2 p-2 rounded-lg bg-muted">
               <Image
-                src={project.contributors[0].image}
-                alt={project.contributors[0].name}
+                src={project.team[0].image}
+                alt={project.team[0].name}
                 width={40}
                 height={40}
                 className="rounded-full"
               />
               <div>
-                <p className="text-sm font-medium">{project.contributors[0].name}</p>
-                <p className="text-xs text-muted-foreground">{project.contributors[0].role}</p>
+                <p className="text-sm font-medium">{project.team[0].name}</p>
+                <p className="text-xs text-muted-foreground">{project.team[0].role}</p>
               </div>
             </div>
           )}
 
           {/* Project Link */}
-          {project.projectUrl && (
+          {project.videoUrl && (
             <Link 
-              href={project.projectUrl}
+              href={project.videoUrl}
               target="_blank"
               className="flex items-center justify-between p-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
             >
-              <span className="text-sm font-medium">Visit Website</span>
+              <span className="text-sm font-medium">Watch Video</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           )}
@@ -291,7 +314,7 @@ export default function WorkPage() {
         selectedCategories.length === 0 || project.categories.some((category) => selectedCategories.includes(category))
 
       // Year filter
-      const matchesYear = selectedYears.length === 0 || selectedYears.includes(project.year)
+      const matchesYear = selectedYears.length === 0 || selectedYears.includes(project.year.toString())
 
       // Client filter
       const matchesClient = selectedClients.length === 0 || selectedClients.includes(project.client)

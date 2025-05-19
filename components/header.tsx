@@ -10,14 +10,34 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
+import { useTheme } from "next-themes"
+
+const mainNavItems = [
+  { name: "Services", path: "/services" },
+  { name: "Pricing", path: "/pricing" },
+  { name: "Work", path: "/work" },
+  {
+    name: "Company",
+    path: "/company",
+    children: [
+      { name: "About Us", path: "/about" },
+      { name: "Team", path: "/team" },
+      { name: "Partners", path: "/partners" },
+    ],
+  },
+  { name: "Gallery", path: "/gallery" },
+  { name: "Studio", path: "/studio" },
+  { name: "Contact", path: "/contact" },
+]
 
 export default function Header({ isLoading = false, showDuringLoading = false }) {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [hoveredItem, setHoveredItem] = useState(null)
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const pathname = usePathname()
   const router = useRouter()
+  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,36 +48,18 @@ export default function Header({ isLoading = false, showDuringLoading = false })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
   }
 
-  const mainNavItems = [
-    { name: "Services", path: "/services" },
-    { name: "Work", path: "/work" },
-    {
-      name: "Company",
-      path: "/company",
-      children: [
-        { name: "About Us", path: "/about" },
-        { name: "Team", path: "/team" },
-        { name: "Partners", path: "/partners" },
-      ],
-    },
-    { name: "Products", path: "/products" },
-    { name: "Gallery", path: "/gallery" },
-    { name: "Studio", path: "/studio" },
-    { name: "Contact", path: "/contact" },
-  ]
-
   const headerBg = scrolled ? "glass-nav" : "bg-transparent"
   const headerStyle = isLoading && !showDuringLoading ? "opacity-0 pointer-events-none" : "opacity-100"
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${headerBg} ${headerStyle}`}>
+    <header className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${headerBg} ${headerStyle}`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex h-16 items-center justify-between border-b border-border/10">
           <div className="flex items-center">

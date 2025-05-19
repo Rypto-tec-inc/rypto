@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Briefcase, Users, Phone, Layers, ImageIcon, Search } from "lucide-react"
+import { Home, Briefcase, Users, Phone, Layers, ImageIcon, Search, DollarSign, Building2 } from "lucide-react"
 import { motion } from "framer-motion"
 
 const MobileNav = () => {
@@ -21,13 +21,14 @@ const MobileNav = () => {
   }, [])
 
   const navItems = [
-    { name: "Home", icon: Home, path: "/" },
+    { name: "Services", icon: Layers, path: "/services" },
+    { name: "Pricing", icon: DollarSign, path: "/pricing" },
     { name: "Work", icon: Briefcase, path: "/work" },
+    { name: "Company", icon: Building2, path: "/company" },
     { name: "Gallery", icon: ImageIcon, path: "/gallery" },
-    { name: "Team", icon: Users, path: "/team" },
+    { name: "Studio", icon: Layers, path: "/studio" },
     { name: "Search", icon: Search, path: "/search" },
     { name: "Contact", icon: Phone, path: "/contact" },
-    { name: "Studio", icon: Layers, path: "/studio" },
   ]
 
   if (!isVisible) return null

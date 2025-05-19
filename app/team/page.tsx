@@ -37,14 +37,15 @@ const teamMembers: TeamMember[] = [
     id: "1",
     name: "Victor Edet Coleman",
     role: "CEO & Founder",
-    department: "Software Engineer and 3d modeler and animator",
+    department: "Software Engineering & 3D Animation",
     team: "company",
-    bio: "Visionary leader with 15+ years in tech innovation across Africa.",
-    skills: ["Leadership", "Strategy", "Innovation"],
+    bio: "Visionary leader and full-stack developer with expertise in software engineering and 3D animation. Leading RYPTO TEC's mission to build innovative solutions for Africa's digital future.",
+    skills: ["Software Development", "3D Animation", "Leadership", "VR/AR", "Web Development"],
     image: "/Team/victor.jpg",
     social: {
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com",
+      linkedin: "https://linkedin.com/in/victoredetcoleman",
+      twitter: "https://twitter.com/victorecoleman",
+      github: "https://github.com/victoredetcoleman"
     },
   },
   {

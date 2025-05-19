@@ -1,449 +1,720 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
-import { motion, useInView, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, X, Download, Info, Play, Search } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Play, X, Share2, Download, Heart, MessageCircle, Facebook, Twitter, Linkedin, Link2, Grid, List, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import Barcode from "@/components/barcode"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { getDominantColor, adjustColorForBackground } from "@/lib/color-utils"
+import Link from "next/link"
+
+type GalleryItem = {
+  id: string
+  title: string
+  description: string
+  image: string
+  type: 'image' | 'video'
+  videoUrl?: string
+  category: string
+  creator: {
+    name: string
+    role: string
+    image: string
+    profileUrl: string
+  }
+}
+
+type GallerySection = {
+  name: string
+  path: string
+  items: GalleryItem[]
+}
 
 export default function GalleryPage() {
   const { toast } = useToast()
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
-  const [activeFilter, setActiveFilter] = useState("all")
-  const [activeCategory, setActiveCategory] = useState("all")
-  const [viewMode, setViewMode] = useState("grid")
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [currentImage, setCurrentImage] = useState(null)
-  const [scrollY, setScrollY] = useState(0)
+  const [sections, setSections] = useState<GallerySection[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedSection, setSelectedSection] = useState("all")
+  const [likedItems, setLikedItems] = useState<string[]>([])
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
+  const [backgroundColor, setBackgroundColor] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Track scroll position for parallax effects
+  // Load gallery sections
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY)
+    const loadGallerySections = async () => {
+      try {
+        const response = await fetch('/api/gallery')
+        if (!response.ok) throw new Error('Failed to load gallery')
+        const data = await response.json()
+        // Add creator information to each item
+        const sectionsWithCreators = data.sections.map((section: GallerySection) => ({
+          ...section,
+          items: section.items.map((item: GalleryItem) => ({
+            ...item,
+            creator: {
+              name: "Victor Edet Coleman",
+              role: "Lead Developer & 3D Artist",
+              image: "/Team/victor.jpg",
+              profileUrl: "/team"
+            }
+          }))
+        }))
+        setSections(sectionsWithCreators || [])
+      } catch (error) {
+        console.error('Error loading gallery:', error)
+        toast({
+          title: "Error",
+          description: "Failed to load gallery items",
+          variant: "destructive"
+        })
+      } finally {
+        setLoading(false)
+      }
     }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
 
-  // Gallery items data
-  const galleryItems = [
-    {
-      id: "G001",
-      title: "Software Architecture Visualization",
-      description: "A 3D visualization of our microservices architecture",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "software",
-      type: "image",
-      year: 2023,
-      tags: ["architecture", "3d", "visualization"],
-    },
-    {
-      id: "G002",
-      title: "Character Animation Reel",
-      description: "Showcase of our latest character animations",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "animation",
-      type: "video",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      year: 2023,
-      tags: ["animation", "characters", "reel"],
-    },
-    {
-      id: "G003",
-      title: "VR Environment Concept",
-      description: "Immersive virtual reality environment for architectural visualization",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "vr",
-      type: "image",
-      year: 2023,
-      tags: ["vr", "architecture", "concept"],
-    },
-    {
-      id: "G004",
-      title: "UI/UX Design System",
-      description: "Our comprehensive design system for web and mobile applications",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "design",
-      type: "image",
-      year: 2023,
-      tags: ["ui", "ux", "design-system"],
-    },
-    {
-      id: "G005",
-      title: "Product Showcase",
-      description: "3D renders of our latest product designs",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "product",
-      type: "image",
-      year: 2023,
-      tags: ["product", "3d", "render"],
-    },
-    {
-      id: "G006",
-      title: "Mobile App Prototype",
-      description: "Interactive prototype of our mobile application",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "software",
-      type: "image",
-      year: 2023,
-      tags: ["mobile", "app", "prototype"],
-    },
-    {
-      id: "G007",
-      title: "Zig Clothes Brand 3D Design",
-      description: "A 3D design of our latest product designs ",
-      image: "/gallary/zig_hoodie_design.png",
-      category: "design",
-      type: "image",
-      year: 2022,
-      tags: ["brand", "3d", "design"],
-    },
-    {
-      id: "G008",
-      title: "Architectural Visualization",
-      description: "Photorealistic renders of architectural projects",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "vr",
-      type: "image",
-      year: 2022,
-      tags: ["architecture", "render", "visualization"],
-    },
-    {
-      id: "G009",
-      title: "Product Demo Video",
-      description: "Demonstration of our latest software product",
-      image: "/placeholder.svg?height=800&width=1200",
-      category: "software",
-      type: "video",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      year: 2022,
-      tags: ["product", "demo", "video"],
-    },
-  ]
+    loadGallerySections()
+  }, [toast])
 
-  // Filter gallery items based on active filters and search query
-  const filteredItems = galleryItems.filter((item) => {
-    if (activeFilter !== "all" && item.type !== activeFilter) return false
-    if (activeCategory !== "all" && item.category !== activeCategory) return false
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      return (
-        item.title.toLowerCase().includes(query) ||
-        item.description.toLowerCase().includes(query) ||
-        item.tags.some((tag) => tag.toLowerCase().includes(query))
-      )
-    }
-    return true
+  // Get all items from all sections
+  const allItems = sections.flatMap(section => section.items)
+
+  // Filter items based on search and section
+  const filteredItems = allItems.filter(item => {
+    const matchesSearch = searchQuery === "" || 
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    const matchesSection = selectedSection === "all" || 
+      item.category.toLowerCase().includes(selectedSection.toLowerCase())
+
+    return matchesSearch && matchesSection
   })
 
-  // Categories for filtering
-  const categories = [
-    { id: "all", name: "All Categories" },
-    { id: "software", name: "Software" },
-    { id: "animation", name: "Animation" },
-    { id: "vr", name: "VR/AR" },
-    { id: "design", name: "Design" },
-    { id: "product", name: "Product" },
-  ]
+  // Get unique sections
+  const sectionOptions = ["all", ...sections.map(section => section.path)]
 
-  // Open lightbox with selected image
-  const openLightbox = (item) => {
-    setCurrentImage(item)
-    setLightboxOpen(true)
-    document.body.style.overflow = "hidden"
+  // Handle like
+  const toggleLike = (itemId: string) => {
+    setLikedItems(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
+    )
   }
 
-  // Close lightbox
-  const closeLightbox = () => {
-    setLightboxOpen(false)
-    document.body.style.overflow = "auto"
+  // Handle share
+  const handleShare = async (item: GalleryItem, platform?: string) => {
+    const url = window.location.origin + item.image
+    const title = item.title
+    const text = item.description
+
+    try {
+      if (platform) {
+        // Platform-specific sharing
+        switch (platform) {
+          case 'facebook':
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')
+            break
+          case 'twitter':
+            window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank')
+            break
+          case 'linkedin':
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
+            break
+          case 'whatsapp':
+            window.open(`https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`, '_blank')
+            break
+        }
+      } else {
+        // Native share if available
+        if (navigator.share) {
+          await navigator.share({
+            title,
+            text,
+            url
+          })
+        } else {
+          // Fallback to copying link
+          await navigator.clipboard.writeText(url)
+          toast({
+            title: "Link copied!",
+            description: "The image link has been copied to your clipboard.",
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error sharing:', error)
+      toast({
+        title: "Error",
+        description: "Failed to share item",
+        variant: "destructive"
+      })
+    }
   }
 
-  // Navigate to next/previous image in lightbox
-  const navigateLightbox = (direction) => {
-    const currentIndex = filteredItems.findIndex((item) => item.id === currentImage.id)
-    let newIndex
+  // Handle download
+  const handleDownload = async (item: GalleryItem) => {
+    try {
+      const response = await fetch(item.image)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = item.title
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      toast({
+        title: "Download started",
+        description: "Your file is being downloaded.",
+      })
+    } catch (error) {
+      console.error('Error downloading:', error)
+      toast({
+        title: "Error",
+        description: "Failed to download item",
+        variant: "destructive"
+      })
+    }
+  }
 
-    if (direction === "next") {
-      newIndex = (currentIndex + 1) % filteredItems.length
-    } else {
-      newIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length
+  // Get current items for pagination
+  const getCurrentItems = (items: GalleryItem[]) => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return items.slice(startIndex, startIndex + itemsPerPage)
+  }
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage)
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleCardClick = async (e: React.MouseEvent, item: GalleryItem) => {
+    // Prevent if clicking on any interactive element
+    const target = e.target as HTMLElement;
+    if (
+      target.closest('button') ||
+      target.closest('a') ||
+      target.closest('[role="menuitem"]') ||
+      target.closest('[role="dialog"]') ||
+      target.closest('.dropdown-menu') ||
+      target.closest('.dropdown-content')
+    ) {
+      return;
     }
 
-    setCurrentImage(filteredItems[newIndex])
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsLoading(true);
+    try {
+      // Only get dominant color for images
+      if (item.type === 'image') {
+        const dominantColor = await getDominantColor(item.image);
+        const adjustedColor = adjustColorForBackground(dominantColor);
+        setBackgroundColor(adjustedColor);
+      } else {
+        setBackgroundColor(''); // Reset background for videos
+      }
+      setSelectedItem(item);
+    } catch (error) {
+      console.error("Error getting dominant color:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setSelectedItem(null)
+    setBackgroundColor("")
+  }
+
+  if (loading) {
+    return (
+      <div className="container py-12">
+        <div className="flex items-center justify-center h-[50vh]">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <>
-      <div className="container px-4 py-12 md:px-6 md:py-24">
-        <div className="mx-auto max-w-6xl space-y-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-4"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="text-8xl font-bold tracking-tighter">01</div>
-              <div>
-                <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Gallery</h1>
-                <p className="mt-2 text-xl text-muted-foreground">
-                  Explore our portfolio of work across various disciplines
-                </p>
-              </div>
+    <div className="min-h-screen">
+      {/* Background color transition */}
+      <motion.div
+        className="fixed inset-0 transition-colors duration-500 pointer-events-none"
+        style={{ backgroundColor: backgroundColor || "transparent" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: backgroundColor ? 0.1 : 0 }}
+      />
+
+      <div className="container py-12">
+        <div className="max-w-6xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold">Gallery</h1>
+            <p className="text-muted-foreground">
+              Explore our collection of images and videos
+            </p>
+          </div>
+
+          {/* Filters and View Toggle */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <Input
+                placeholder="Search gallery..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="max-w-sm"
+              />
+              <select
+                value={selectedSection}
+                onChange={(e) => setSelectedSection(e.target.value)}
+                className="bg-background border border-input rounded-md px-3 py-2"
+              >
+                {sectionOptions.map(section => (
+                  <option key={section} value={section}>
+                    {section === "all" ? "All Sections" : section.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  </option>
+                ))}
+              </select>
             </div>
-          </motion.div>
-
-          <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
-            <div className="w-full">
-              <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between mb-8">
-                <Tabs value={viewMode} onValueChange={setViewMode} className="w-auto">
-                  <TabsList className="bg-muted/30 p-1 h-auto">
-                    <TabsTrigger value="grid" className="px-3 py-1.5 h-auto">
-                      Grid View
-                    </TabsTrigger>
-                    <TabsTrigger value="list" className="px-3 py-1.5 h-auto">
-                      List View
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-
-                <div className="relative w-full md:w-64">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search gallery..."
-                    className="pl-9 rounded-none border-border"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2 mb-6">
-                <select
-                  className="bg-background border border-border rounded-none px-3 py-1.5 text-sm"
-                  value={activeCategory}
-                  onChange={(e) => setActiveCategory(e.target.value)}
-                >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  className="bg-background border border-border rounded-none px-3 py-1.5 text-sm"
-                  value={activeFilter}
-                  onChange={(e) => setActiveFilter(e.target.value)}
-                >
-                  <option value="all">All Types</option>
-                  <option value="image">Images</option>
-                  <option value="video">Videos</option>
-                </select>
-              </div>
-
-              <Tabs value={viewMode} className="w-full">
-                <TabsContent value="grid" className="m-0">
-                  <div ref={ref} className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {filteredItems.map((item, index) => (
-                      <motion.div
-                        key={item.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.5, delay: 0.1 * (index % 6) }}
-                        className="group cursor-pointer"
-                        onClick={() => openLightbox(item)}
-                      >
-                        <Card className="overflow-hidden rounded-none border-border h-full bg-background/50 hover:bg-background transition-colors duration-300">
-                          <div className="aspect-[4/3] relative overflow-hidden">
-                            <Image
-                              src={item.image || "/placeholder.svg"}
-                              alt={item.title}
-                              fill
-                              className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-                            {item.type === "video" && (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="rounded-full bg-background/80 p-3">
-                                  <Play className="h-6 w-6" />
-                                </div>
-                              </div>
-                            )}
-                            <div className="absolute top-2 right-2">
-                              <Badge variant="outline" className="bg-background/80">
-                                {item.category}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <h3 className="font-medium">{item.title}</h3>
-                              <Barcode value={item.id} width={40} height={15} />
-                            </div>
-                            <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
-                          </div>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="list" className="m-0">
-                  <div className="space-y-6">
-                    {filteredItems.map((item, index) => (
-                      <motion.div
-                        key={item.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.5, delay: 0.05 * (index % 10) }}
-                        className="group cursor-pointer"
-                        onClick={() => openLightbox(item)}
-                      >
-                        <Card className="overflow-hidden rounded-none border-border bg-background/50 hover:bg-background transition-colors duration-300">
-                          <div className="flex flex-col md:flex-row">
-                            <div className="md:w-1/3 aspect-video md:aspect-square relative overflow-hidden">
-                              <Image
-                                src={item.image || "/placeholder.svg"}
-                                alt={item.title}
-                                fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                              {item.type === "video" && (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <div className="rounded-full bg-background/80 p-3">
-                                    <Play className="h-6 w-6" />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                            <div className="p-4 md:w-2/3 flex flex-col justify-between">
-                              <div>
-                                <div className="flex justify-between items-start mb-2">
-                                  <div>
-                                    <h3 className="font-medium text-lg">{item.title}</h3>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <Badge variant="outline">{item.category}</Badge>
-                                      <Badge variant="outline">{item.year}</Badge>
-                                    </div>
-                                  </div>
-                                  <Barcode value={item.id} width={60} height={20} />
-                                </div>
-                                <p className="text-muted-foreground mt-4">{item.description}</p>
-                                <div className="flex flex-wrap gap-1 mt-4">
-                                  {item.tags.map((tag) => (
-                                    <Badge key={tag} variant="secondary" className="bg-muted/50">
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                              <div className="mt-4 flex justify-end">
-                                <Button variant="outline" size="sm" className="text-xs">
-                                  View Details
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-                </TabsContent>
-              </Tabs>
+            <div className="flex gap-2">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Lightbox */}
-      <AnimatePresence>
-        {lightboxOpen && currentImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[101] bg-background/95 flex items-center justify-center p-4"
-          >
-            <div className="absolute top-4 right-4 flex items-center space-x-2">
-              <Button variant="outline" size="icon" onClick={() => toast({ title: "Download started" })}>
-                <Download className="h-4 w-4" />
-              </Button>
+          {/* Gallery Sections */}
+          {sections.map(section => (
+            <div key={section.path} className="space-y-6">
+              <h2 className="text-2xl font-semibold">{section.name}</h2>
+              <div className={viewMode === 'grid' 
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                : "space-y-4"
+              }>
+                {getCurrentItems(section.items).map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className={viewMode === 'list' ? "flex gap-4" : ""}
+                  >
+                    <Card 
+                      className={`overflow-hidden cursor-pointer hover:shadow-lg transition-shadow ${
+                        viewMode === 'list' ? "flex-1 flex" : ""
+                      }`}
+                      onClick={(e) => handleCardClick(e, item)}
+                    >
+                      <div className={`relative bg-muted ${
+                        viewMode === 'list' ? "w-48" : "aspect-[4/3]"
+                      }`}>
+                        {item.type === "video" ? (
+                          <>
+                            <video
+                              src={item.videoUrl}
+                              className="w-full h-full object-cover"
+                              preload="metadata"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="rounded-full bg-background/80 p-3">
+                                <Play className="h-6 w-6" />
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <Image
+                            src={item.image}
+                            alt={item.title}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            unoptimized
+                          />
+                        )}
+                        {/* RYPT Logo Watermark */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <Image
+                            src="/gallary/logos/RYPTO_LOGO2-removebg-preview.png"
+                            alt="RYPT"
+                            width={120}
+                            height={120}
+                            className="opacity-20"
+                            unoptimized
+                          />
+                        </div>
+                        {/* Category-specific Logo */}
+                        {item.category.toLowerCase().includes('orange') && (
+                          <div className="absolute bottom-2 left-2 pointer-events-none">
+                            <Image
+                              src="/gallary/logos/orange.png"
+                              alt="Orange"
+                              width={40}
+                              height={40}
+                              className="opacity-80"
+                              unoptimized
+                            />
+                          </div>
+                        )}
+                        {item.category.toLowerCase().includes('zig') && (
+                          <div className="absolute bottom-2 left-2 pointer-events-none">
+                            <Image
+                              src="/gallary/logos/zig.png"
+                              alt="Zig"
+                              width={40}
+                              height={40}
+                              className="opacity-80"
+                              unoptimized
+                            />
+                          </div>
+                        )}
+                        <Badge 
+                          variant="secondary" 
+                          className="absolute top-2 right-2 bg-background/80 pointer-events-none"
+                        >
+                          {item.category}
+                        </Badge>
+                      </div>
+
+                      <div className={`p-4 space-y-3 ${viewMode === 'list' ? "flex-1" : ""}`}>
+                        <div>
+                          <h3 className="font-medium">{item.title}</h3>
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                            {item.description}
+                          </p>
+                        </div>
+                        {/* Creator Info */}
+                        {item.creator && (
+                          <div className="flex items-center gap-2 pt-2 border-t">
+                            <Link href={item.creator.profileUrl} className="group">
+                              <div className="flex items-center gap-2">
+                                <Image
+                                  src={item.creator.image}
+                                  alt={item.creator.name}
+                                  width={24}
+                                  height={24}
+                                  className="rounded-full ring-2 ring-offset-2 ring-transparent group-hover:ring-primary transition-all"
+                                />
+                                <div className="flex flex-col text-sm">
+                                  <span className="font-medium group-hover:text-primary transition-colors">
+                                    {item.creator.name}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {item.creator.role}
+                                  </span>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between pt-2 border-t">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleLike(item.id);
+                              }}
+                            >
+                              <Heart 
+                                className={`h-4 w-4 ${likedItems.includes(item.id) ? 'fill-red-500 text-red-500' : ''}`}
+                              />
+                            </Button>
+                            <span className="text-sm text-muted-foreground">
+                              {likedItems.includes(item.id) ? 'Liked' : 'Like'}
+                            </span>
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                              >
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent 
+                              align="end" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                            >
+                              <DropdownMenuItem 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleShare(item);
+                                }}
+                              >
+                                <Link2 className="h-4 w-4 mr-2" />
+                                Copy Link
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleShare(item, 'facebook');
+                                }}
+                              >
+                                <Facebook className="h-4 w-4 mr-2" />
+                                Facebook
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleShare(item, 'twitter');
+                                }}
+                              >
+                                <Twitter className="h-4 w-4 mr-2" />
+                                Twitter
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleShare(item, 'linkedin');
+                                }}
+                              >
+                                <Linkedin className="h-4 w-4 mr-2" />
+                                LinkedIn
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleShare(item, 'whatsapp');
+                                }}
+                              >
+                                <MessageCircle className="h-4 w-4 mr-2" />
+                                WhatsApp
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-8">
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => toast({ title: "Info", description: currentImage.description })}
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
               >
-                <Info className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon" onClick={closeLightbox}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <Button variant="outline" size="icon" onClick={() => navigateLightbox("prev")}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-            </div>
-
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <Button variant="outline" size="icon" onClick={() => navigateLightbox("next")}>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </Button>
+              ))}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
+          )}
 
-            <div className="max-w-5xl w-full">
-              {currentImage.type === "image" ? (
-                <div className="relative aspect-video">
-                  <Image
-                    src={currentImage.image || "/placeholder.svg"}
-                    alt={currentImage.title}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-video">
-                  <iframe
-                    src={currentImage.videoUrl}
-                    title={currentImage.title}
-                    className="w-full h-full"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              )}
-
-              <div className="mt-4 bg-background p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="text-xl font-medium">{currentImage.title}</h2>
-                    <p className="text-muted-foreground mt-2">{currentImage.description}</p>
+          {/* Lightbox */}
+          <AnimatePresence>
+            {selectedItem && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 bg-background/95 flex items-center justify-center p-4"
+                onClick={handleClose}
+              >
+                <div 
+                  className="max-w-4xl w-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="relative aspect-video bg-muted">
+                    {selectedItem.type === "video" ? (
+                      <video
+                        src={selectedItem.videoUrl}
+                        className="w-full h-full"
+                        controls
+                        autoPlay
+                        playsInline
+                      />
+                    ) : (
+                      <Image
+                        src={selectedItem.image}
+                        alt={selectedItem.title}
+                        fill
+                        className="object-contain"
+                        unoptimized
+                      />
+                    )}
+                    {/* RYPT Logo Watermark in Lightbox */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <Image
+                        src="/gallary/logos/RYPTO_LOGO2-removebg-preview.png"
+                        alt="RYPT"
+                        width={200}
+                        height={200}
+                        className="opacity-10"
+                        unoptimized
+                      />
+                    </div>
+                    {/* Category-specific Logo in Lightbox */}
+                    {selectedItem.category.toLowerCase().includes('orange') && (
+                      <div className="absolute bottom-4 left-4 pointer-events-none">
+                        <Image
+                          src="/gallary/logos/orange.png"
+                          alt="Orange"
+                          width={60}
+                          height={60}
+                          className="opacity-90"
+                          unoptimized
+                        />
+                      </div>
+                    )}
+                    {selectedItem.category.toLowerCase().includes('zig') && (
+                      <div className="absolute bottom-4 left-4 pointer-events-none">
+                        <Image
+                          src="/gallary/logos/zig.png"
+                          alt="Zig"
+                          width={60}
+                          height={60}
+                          className="opacity-90"
+                          unoptimized
+                        />
+                      </div>
+                    )}
                   </div>
-                  <Barcode value={currentImage.id} width={80} height={30} />
-                </div>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  <Badge variant="outline">{currentImage.category}</Badge>
-                  <Badge variant="outline">{currentImage.year}</Badge>
-                  {currentImage.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="bg-muted/50">
-                      {tag}
+                  <div className="mt-4 bg-background p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h2 className="text-xl font-medium">{selectedItem.title}</h2>
+                        <p className="text-muted-foreground mt-2">
+                          {selectedItem.description}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDownload(selectedItem)}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => handleShare(selectedItem)}>
+                              <Link2 className="h-4 w-4 mr-2" />
+                              Copy Link
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'facebook')}>
+                              <Facebook className="h-4 w-4 mr-2" />
+                              Facebook
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'twitter')}>
+                              <Twitter className="h-4 w-4 mr-2" />
+                              Twitter
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'linkedin')}>
+                              <Linkedin className="h-4 w-4 mr-2" />
+                              LinkedIn
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'whatsapp')}>
+                              <MessageCircle className="h-4 w-4 mr-2" />
+                              WhatsApp
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleClose}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="mt-4">
+                      {selectedItem.category}
                     </Badge>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
   )
 }
