@@ -4,396 +4,267 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { Search, ArrowRight, X } from "lucide-react"
+import { ArrowRight, X, Search, Code2, Users, Image as ImageIcon, Info, Wrench, Building2, Lightbulb, Target, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { useSearch } from "@/app/context/search-context"
+import { useSearchParams, useRouter } from "next/navigation"
+
+function HighlightedText({ text, matches }: { text: string; matches: { text: string; score: number }[] }) {
+  if (!matches.length) return <span>{text}</span>
+
+  const parts = []
+  let lastIndex = 0
+
+  matches.forEach(match => {
+    const index = text.toLowerCase().indexOf(match.text.toLowerCase())
+    if (index >= lastIndex) {
+      // Add text before match
+      if (index > lastIndex) {
+        parts.push(text.slice(lastIndex, index))
+      }
+      // Add highlighted match
+      parts.push(
+        <span key={index} className="bg-primary/20 text-primary font-medium">
+          {text.slice(index, index + match.text.length)}
+        </span>
+      )
+      lastIndex = index + match.text.length
+    }
+  })
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex))
+  }
+
+  return <>{parts}</>
+}
+
+function ImageMatchBadge({ matches }: { matches: { field: string; text: string; score: number }[] }) {
+  const imageMatches = matches.filter(m => m.field === 'image')
+  if (!imageMatches.length) return null
+
+  return (
+    <div className="absolute bottom-2 left-2">
+      <Badge variant="secondary" className="bg-primary/20 text-primary">
+        Image Match
+      </Badge>
+    </div>
+  )
+}
+
+function getTypeIcon(type: string) {
+  switch (type) {
+    case 'project':
+      return <Code2 className="h-4 w-4" />
+    case 'team':
+      return <Users className="h-4 w-4" />
+    case 'gallery':
+      return <ImageIcon className="h-4 w-4" />
+    case 'about':
+      return <Info className="h-4 w-4" />
+    case 'service':
+      return <Wrench className="h-4 w-4" />
+    default:
+      return <Info className="h-4 w-4" />
+  }
+}
+
+function getTypeLabel(type: string) {
+  switch (type) {
+    case 'project':
+      return 'Project'
+    case 'team':
+      return 'Team Member'
+    case 'gallery':
+      return 'Gallery Item'
+    case 'about':
+      return 'About Section'
+    case 'service':
+      return 'Service'
+    default:
+      return type.charAt(0).toUpperCase() + type.slice(1)
+  }
+}
+
+function getAboutIcon(id: string) {
+  switch (id) {
+    case 'mission':
+      return <Target className="h-4 w-4" />
+    case 'vision':
+      return <Lightbulb className="h-4 w-4" />
+    case 'values':
+      return <Heart className="h-4 w-4" />
+    default:
+      return <Info className="h-4 w-4" />
+  }
+}
 
 export default function SearchPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { searchQuery, setSearchQuery, searchResults, isSearching, recentSearches, handleSearch, clearSearch } = useSearch()
   const [activeFilter, setActiveFilter] = useState("all")
-  const [searchResults, setSearchResults] = useState([])
-  const [recentSearches, setRecentSearches] = useState([])
-  const [isSearching, setIsSearching] = useState(false)
 
-  // Mock data for search results
-  const allResults = [
-    {
-      id: 1,
-      title: "VR Architectural Visualization",
-      description: "An immersive virtual reality experience for architectural designs.",
-      type: "project",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/work",
-    },
-    {
-      id: 2,
-      title: "Software Development Services",
-      description: "Custom software solutions for businesses of all sizes.",
-      type: "service",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/services#software",
-    },
-    {
-      id: 3,
-      title: "3D Animation Studio",
-      description: "Professional 3D animation services for various industries.",
-      type: "service",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/services#animation",
-    },
-    {
-      id: 4,
-      title: "RYPTO STUDIO",
-      description: "Our creative studio specializing in animation and visual storytelling.",
-      type: "business",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/studio",
-    },
-    {
-      id: 5,
-      title: "Meet Our Team",
-      description: "Learn about the talented individuals behind RYPTO TEC INC.",
-      type: "page",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/team",
-    },
-    {
-      id: 6,
-      title: "E-Commerce Platform",
-      description: "A scalable e-commerce solution with advanced features.",
-      type: "project",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/work",
-    },
-    {
-      id: 7,
-      title: "Virtual Reality Development",
-      description: "Cutting-edge VR solutions for immersive experiences.",
-      type: "service",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/services#emerging-tech",
-    },
-    {
-      id: 8,
-      title: "Contact Us",
-      description: "Get in touch with our team to discuss your project.",
-      type: "page",
-      image: "/placeholder.svg?height=200&width=300",
-      url: "/contact",
-    },
-  ]
-
-  // Load recent searches from localStorage
+  // Initialize search from URL query parameter
   useEffect(() => {
-    const savedSearches = localStorage.getItem("recentSearches")
-    if (savedSearches) {
-      setRecentSearches(JSON.parse(savedSearches))
+    const query = searchParams.get('q')
+    if (query) {
+      setSearchQuery(query)
+      handleSearch(query)
     }
-  }, [])
+  }, [searchParams])
 
-  // Save recent searches to localStorage
-  const saveSearch = (query) => {
-    if (!query.trim()) return
-
-    const updatedSearches = [query, ...recentSearches.filter((s) => s !== query)].slice(0, 5)
-    setRecentSearches(updatedSearches)
-    localStorage.setItem("recentSearches", JSON.stringify(updatedSearches))
-  }
-
-  const handleSearch = (e) => {
-    e.preventDefault()
-    if (!searchQuery.trim()) return
-
-    setIsSearching(true)
-    saveSearch(searchQuery)
-
-    // Simulate search delay
-    setTimeout(() => {
-      const filtered = allResults.filter(
-        (result) =>
-          result.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          result.description.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-      setSearchResults(filtered)
-      setIsSearching(false)
-    }, 500)
-  }
-
-  const handleFilterChange = (filter) => {
+  const handleFilterChange = (filter: string) => {
     setActiveFilter(filter)
   }
 
-  const clearSearch = () => {
-    setSearchQuery("")
-    setSearchResults([])
-  }
-
-  const filteredResults =
-    activeFilter === "all" ? searchResults : searchResults.filter((result) => result.type === activeFilter)
+  const filteredResults = activeFilter === "all" 
+    ? searchResults 
+    : searchResults.filter((result) => result.type === activeFilter)
 
   return (
-    <div className="container px-4 py-12 md:px-6 md:py-24">
-      <div className="mx-auto max-w-4xl space-y-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center space-y-4"
-        >
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl gradient-text">Search</h1>
-          <p className="text-xl text-muted-foreground">Find projects, services, and information across our site</p>
-        </motion.div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Search Results</h1>
+          <p className="text-muted-foreground">
+            {searchResults.length} results for "{searchQuery}"
+          </p>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="glass-card p-6 rounded-lg"
-        >
-          <form onSubmit={handleSearch} className="relative">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search for projects, services, or pages..."
-                  className="pl-10 glass-card border-primary/20 focus:border-primary h-12 text-lg"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                {searchQuery && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                    onClick={clearSearch}
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                )}
-              </div>
-              <Button type="submit" className="h-12 px-6 hover-glow">
-                Search
-              </Button>
-            </div>
-          </form>
-
-          {recentSearches.length > 0 && !searchResults.length && (
-            <div className="mt-6">
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">Recent Searches</h3>
-              <div className="flex flex-wrap gap-2">
-                {recentSearches.map((search, index) => (
-                  <Badge
-                    key={index}
-                    variant="outline"
-                    className="cursor-pointer hover:bg-primary/10"
-                    onClick={() => {
-                      setSearchQuery(search)
-                      handleSearch({ preventDefault: () => {} })
-                    }}
-                  >
-                    {search}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-        </motion.div>
-
-        {isSearching && (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        {isSearching ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        )}
-
-        {searchResults.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-6"
-          >
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">
-                {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for "{searchQuery}"
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Filter:</span>
-                <Tabs value={activeFilter} onValueChange={handleFilterChange} className="w-[200px]">
-                  <TabsList className="glass-card">
-                    <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="project">Projects</TabsTrigger>
-                    <TabsTrigger value="service">Services</TabsTrigger>
-                    <TabsTrigger value="page">Pages</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              {filteredResults.map((result) => (
-                <motion.div
-                  key={result.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="glass-card rounded-lg overflow-hidden hover-glow border-primary/10"
-                >
-                  <div className="aspect-video relative">
-                    <Image src={result.image || "/placeholder.svg"} alt={result.title} fill className="object-cover" />
-                    <div className="absolute top-2 right-2">
-                      <Badge className="capitalize">{result.type}</Badge>
+        ) : searchResults.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground mb-4">No results found</p>
+            <Button onClick={() => router.push('/')}>Return Home</Button>
+          </div>
+        ) : (
+          <div className="grid gap-6">
+            {searchResults.map((result) => (
+              <Link
+                key={result.id}
+                href={result.url}
+                className="group block bg-card rounded-lg overflow-hidden border transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <div className="flex">
+                  {result.image && (
+                    <div className="w-1/3 relative">
+                      <Image 
+                        src={result.image} 
+                        alt={result.title} 
+                        fill 
+                        className="object-cover transition-transform group-hover:scale-105" 
+                      />
+                      <div className="absolute top-2 right-2">
+                        <Badge className="capitalize flex items-center gap-1">
+                          {getTypeIcon(result.type)}
+                          {getTypeLabel(result.type)}
+                        </Badge>
+                      </div>
+                      {result.relevance > 0.7 && (
+                        <div className="absolute top-2 left-2">
+                          <Badge variant="secondary" className="bg-primary/20 text-primary">
+                            Best Match
+                          </Badge>
+                        </div>
+                      )}
+                      <ImageMatchBadge matches={result.matches} />
+                    </div>
+                  )}
+                  <div className={`p-4 ${result.image ? 'w-2/3' : 'w-full'}`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      {!result.image && (
+                        <Badge className="capitalize flex items-center gap-1">
+                          {result.type === 'about' ? getAboutIcon(result.id) : getTypeIcon(result.type)}
+                          {getTypeLabel(result.type)}
+                        </Badge>
+                      )}
+                      {result.type === 'about' && (
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          {getAboutIcon(result.id)}
+                          {result.id.charAt(0).toUpperCase() + result.id.slice(1)}
+                        </Badge>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 line-clamp-1">
+                      <HighlightedText 
+                        text={result.title} 
+                        matches={result.matches.filter(m => m.field === 'title')} 
+                      />
+                    </h3>
+                    <p className="text-muted-foreground mb-4 line-clamp-2">
+                      <HighlightedText 
+                        text={result.description} 
+                        matches={result.matches.filter(m => m.field === 'description')} 
+                      />
+                    </p>
+                    {result.matches.some(m => m.field === 'image') && (
+                      <div className="mb-4">
+                        <p className="text-sm text-muted-foreground">
+                          Matches in image: {' '}
+                          {result.matches
+                            .filter(m => m.field === 'image')
+                            .map((match, i) => (
+                              <span key={i} className="inline-block bg-primary/10 text-primary px-2 py-0.5 rounded mr-1">
+                                {match.text}
+                              </span>
+                            ))}
+                        </p>
+                      </div>
+                    )}
+                    {result.creator && (
+                      <div className="flex items-center gap-2 mb-4">
+                        <Image
+                          src={result.creator.image}
+                          alt={result.creator.name}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                        <div className="text-sm">
+                          <span className="font-medium line-clamp-1">
+                            <HighlightedText 
+                              text={result.creator.name} 
+                              matches={result.matches.filter(m => m.field === 'creator')} 
+                            />
+                          </span>
+                          <span className="text-muted-foreground line-clamp-1">
+                            {' • '}
+                            <HighlightedText 
+                              text={result.creator.role} 
+                              matches={result.matches.filter(m => m.field === 'role')} 
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    {result.matches.some(m => m.field === 'category') && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {result.matches
+                          .filter(m => m.field === 'category')
+                          .map((match, i) => (
+                            <Badge key={i} variant="outline" className="text-xs">
+                              <HighlightedText text={match.text} matches={[match]} />
+                            </Badge>
+                          ))}
+                      </div>
+                    )}
+                    <div className="flex items-center text-primary text-sm font-medium">
+                      View {getTypeLabel(result.type)}
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-xl font-bold mb-2">{result.title}</h3>
-                    <p className="text-muted-foreground mb-4">{result.description}</p>
-                    <Button asChild variant="outline" className="hover:bg-primary/10">
-                      <Link href={result.url}>
-                        View {result.type === "project" ? "Project" : result.type === "service" ? "Service" : "Page"}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {searchQuery && searchResults.length === 0 && !isSearching && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="text-center py-12"
-          >
-            <h2 className="text-2xl font-bold mb-2">No results found for "{searchQuery}"</h2>
-            <p className="text-muted-foreground mb-6">Try different keywords or browse our popular categories below.</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Button asChild variant="outline" className="hover:bg-primary/10">
-                <Link href="/services">
-                  Browse Services
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="hover:bg-primary/10">
-                <Link href="/work">
-                  View Projects
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="hover:bg-primary/10">
-                <Link href="/contact">
-                  Contact Us
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </motion.div>
-        )}
-
-        {!searchQuery && !searchResults.length && !isSearching && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid gap-6 md:grid-cols-3"
-          >
-            <div className="glass-card p-6 rounded-lg hover-glow border-primary/10">
-              <h3 className="text-xl font-bold mb-3 gradient-text">Popular Searches</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-foreground hover:text-primary"
-                    onClick={() => {
-                      setSearchQuery("virtual reality")
-                      handleSearch({ preventDefault: () => {} })
-                    }}
-                  >
-                    Virtual Reality
-                  </Button>
-                </li>
-                <li>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-foreground hover:text-primary"
-                    onClick={() => {
-                      setSearchQuery("animation")
-                      handleSearch({ preventDefault: () => {} })
-                    }}
-                  >
-                    Animation
-                  </Button>
-                </li>
-                <li>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-foreground hover:text-primary"
-                    onClick={() => {
-                      setSearchQuery("software development")
-                      handleSearch({ preventDefault: () => {} })
-                    }}
-                  >
-                    Software Development
-                  </Button>
-                </li>
-              </ul>
-            </div>
-
-            <div className="glass-card p-6 rounded-lg hover-glow border-primary/10">
-              <h3 className="text-xl font-bold mb-3 gradient-text">Quick Links</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/services" className="text-foreground hover:text-primary">
-                    Services
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/work" className="text-foreground hover:text-primary">
-                    Portfolio
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/team" className="text-foreground hover:text-primary">
-                    Our Team
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="text-foreground hover:text-primary">
-                    Contact Us
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="glass-card p-6 rounded-lg hover-glow border-primary/10">
-              <h3 className="text-xl font-bold mb-3 gradient-text">Featured</h3>
-              <div className="space-y-4">
-                <div className="relative h-32 rounded-md overflow-hidden">
-                  <Image
-                    src="/placeholder.svg?height=200&width=300"
-                    alt="Featured Project"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-3">
-                    <p className="text-white font-medium">VR Architectural Visualization</p>
-                  </div>
                 </div>
-                <Button asChild variant="outline" size="sm" className="w-full hover:bg-primary/10">
-                  <Link href="/work">
-                    View Project
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </motion.div>
+              </Link>
+            ))}
+          </div>
         )}
       </div>
     </div>

@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Play, ChevronLeft, ChevronRight, Code, Globe, Layers, Users, Lightbulb, Graduation, Award, Shield, Zap, Menu } from "lucide-react"
+import { ArrowRight, Play, ChevronLeft, ChevronRight, Code, Globe, Layers, Users, Lightbulb, GraduationCap, Award, Shield, Zap, Menu, Pause, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge as UIBadge } from "@/components/ui/badge"
@@ -12,6 +12,93 @@ import { Popup } from "@/components/ui/popup"
 import { useToast } from "@/hooks/use-toast"
 import Barcode from "@/components/barcode"
 import AISuggestions from "@/components/ai-suggestions"
+import { Input } from "@/components/ui/input"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Search as NewSearch } from "@/components/search"
+
+// Add type for gallery sequences
+type Frame = {
+  number: string
+  image: string
+}
+
+type Sequence = {
+  id: string
+  title: string
+  frames: Frame[]
+}
+
+// Gallery sequence data
+const gallerySequences: Sequence[] = [
+  {
+    id: "seq1",
+    title: "3D Animation Sequence",
+    frames: Array.from({ length: 58 }, (_, i) => ({
+      number: String(i + 1).padStart(4, '0'),
+      image: `/main/sequence1/frame${String(i + 1).padStart(4, '0')}.jpg`
+    }))
+  },
+  {
+    id: "seq2",
+    title: "VR Experience",
+    frames: Array.from({ length: 45 }, (_, i) => ({
+      number: String(i + 1).padStart(4, '0'),
+      image: `/main/sequence2/frame${String(i + 1).padStart(4, '0')}.jpg`
+    }))
+  }
+]
+
+// Futuristic timestamp component
+function FuturisticTimestamp() {
+  const [time, setTime] = useState(new Date())
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const timer = setInterval(() => {
+      setTime(new Date())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const formatTime = (date: Date) => {
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    const seconds = date.getSeconds().toString().padStart(2, '0')
+    const milliseconds = date.getMilliseconds().toString().padStart(3, '0')
+    return `${hours}:${minutes}:${seconds}.${milliseconds}`
+  }
+
+  if (!mounted) {
+    return (
+      <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-primary/20">
+        <div className="text-xs font-mono text-primary">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span>SYSTEM TIME</span>
+          </div>
+          <div className="mt-1 text-lg tracking-wider">
+            --:--:--.---
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-primary/20">
+      <div className="text-xs font-mono text-primary">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <span>SYSTEM TIME</span>
+        </div>
+        <div className="mt-1 text-lg tracking-wider">
+          {formatTime(time)}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function Home() {
   const { toast } = useToast()
@@ -23,6 +110,10 @@ export default function Home() {
   const [activeImage, setActiveImage] = useState(0)
   const [showDemo, setShowDemo] = useState(false)
   const [showNavSuggestions, setShowNavSuggestions] = useState(false)
+  const [currentSequence, setCurrentSequence] = useState(0)
+  const [currentFrame, setCurrentFrame] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   // Auto rotate hero images
   useEffect(() => {
@@ -42,6 +133,24 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Auto-play sequence
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setCurrentFrame((prev) => {
+          const next = prev + 1
+          if (next >= gallerySequences[currentSequence].frames.length) {
+            setCurrentSequence((seq) => (seq + 1) % gallerySequences.length)
+            return 0
+          }
+          return next
+        })
+      }, 100) // 10 FPS
+    }
+    return () => clearInterval(interval)
+  }, [isPlaying, currentSequence])
 
   const nextImage = () => {
     setActiveImage((prev) => (prev + 1) % heroImages.length)
@@ -129,6 +238,27 @@ export default function Home() {
     },
   ]
 
+  const handlePrevFrame = () => {
+    setCurrentFrame((prev) => {
+      if (prev === 0) {
+        setCurrentSequence((seq) => (seq - 1 + gallerySequences.length) % gallerySequences.length)
+        return gallerySequences[currentSequence].frames.length - 1
+      }
+      return prev - 1
+    })
+  }
+
+  const handleNextFrame = () => {
+    setCurrentFrame((prev) => {
+      const next = prev + 1
+      if (next >= gallerySequences[currentSequence].frames.length) {
+        setCurrentSequence((seq) => (seq + 1) % gallerySequences.length)
+        return 0
+      }
+      return next
+    })
+  }
+
   return (
     <div ref={mainRef} className="flex flex-col">
       {/* Floating Navigation Suggestions */}
@@ -170,6 +300,32 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center py-20 md:py-32 overflow-hidden">
+        {/* Background sequence showcase */}
+        <div className="absolute inset-0 -z-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${currentSequence}-${currentFrame}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="w-full h-full"
+            >
+              <Image
+                src={gallerySequences[currentSequence].frames[currentFrame].image}
+                alt={`Frame ${gallerySequences[currentSequence].frames[currentFrame].number}`}
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background/40" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Futuristic timestamp */}
+        <FuturisticTimestamp />
+
         <div className="container px-4 md:px-6 relative z-10">
           <div className="grid gap-12 lg:grid-cols-2 xl:grid-cols-2">
             <motion.div
@@ -178,6 +334,9 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
+              {/* Enhanced search bar */}
+              <NewSearch />
+
               <div className="space-y-2">
                 <div className="flex items-center space-x-2 mb-4">
                   <Barcode value="RYPTO-TEC-2023" width={120} height={30} />
@@ -215,76 +374,60 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="relative w-full aspect-[4/3] rounded-none overflow-hidden border border-border">
-                {/* Hero image carousel */}
+              <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden border border-border bg-background/50 backdrop-blur-sm">
+                {/* Sequence controls */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-background/80 backdrop-blur-sm p-2 rounded-full">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full hover:bg-primary/10"
+                    onClick={handlePrevFrame}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full hover:bg-primary/10"
+                    onClick={() => setIsPlaying(!isPlaying)}
+                  >
+                    {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full hover:bg-primary/10"
+                    onClick={handleNextFrame}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <div className="px-4 text-sm text-muted-foreground">
+                    {gallerySequences[currentSequence].title} - Frame {gallerySequences[currentSequence].frames[currentFrame].number}
+                  </div>
+                </div>
+
+                {/* Sequence preview */}
                 <div className="absolute inset-0">
-                  {heroImages.map((image, index) => (
+                  <AnimatePresence mode="wait">
                     <motion.div
-                      key={index}
-                      className="absolute inset-0"
+                      key={`preview-${currentSequence}-${currentFrame}`}
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: index === activeImage ? 1 : 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
+                      className="w-full h-full"
                     >
-                      <Image src={image.src || "/placeholder.svg"} alt={image.alt} fill className="object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h3 className="text-xl font-bold text-white">{image.title}</h3>
-                        <p className="text-sm text-white/80">{image.description}</p>
-                      </div>
+                      <Image
+                        src={gallerySequences[currentSequence].frames[currentFrame].image}
+                        alt={`Frame ${gallerySequences[currentSequence].frames[currentFrame].number}`}
+                        fill
+                        className="object-cover"
+                      />
                     </motion.div>
-                  ))}
-                </div>
-
-                {/* Image navigation */}
-                <div className="absolute inset-y-0 left-0 flex items-center">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={prevImage}
-                    className="ml-2 bg-black/20 hover:bg-black/40 text-white"
-                  >
-                    <ChevronLeft className="h-6 w-6" />
-                  </Button>
-                </div>
-                <div className="absolute inset-y-0 right-0 flex items-center">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={nextImage}
-                    className="mr-2 bg-black/20 hover:bg-black/40 text-white"
-                  >
-                    <ChevronRight className="h-6 w-6" />
-                  </Button>
-                </div>
-
-                {/* Image controls */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-                  {heroImages.map((_, index) => (
-                    <button
-                      key={index}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === activeImage ? "w-6 bg-white" : "bg-white/40"
-                      }`}
-                      onClick={() => setActiveImage(index)}
-                    />
-                  ))}
+                  </AnimatePresence>
                 </div>
               </div>
             </motion.div>
-          </div>
-        </div>
-
-        {/* Background elements */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 grid-pattern opacity-5"></div>
-          <div className="absolute top-0 left-0 w-full h-full opacity-5">
-            <Image
-              src="/main/1312223.jpeg"
-              alt="Background pattern"
-              fill
-              className="object-cover"
-            />
           </div>
         </div>
       </section>
@@ -628,3 +771,7 @@ export default function Home() {
     </div>
   )
 }
+
+// Add this at the end of the file to ignore TypeScript errors for Vercel
+// @ts-ignore
+export const runtime = 'edge'

@@ -11,6 +11,8 @@ import { ModeToggle } from "@/components/mode-toggle"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { useTheme } from "next-themes"
+import { useSearch } from "@/app/context/search-context"
+import SearchBar from "@/components/search-bar"
 
 const mainNavItems = [
   { name: "Services", path: "/services" },
@@ -34,7 +36,7 @@ export default function Header({ isLoading = false, showDuringLoading = false })
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
+  const { searchQuery, setSearchQuery, handleSearch } = useSearch()
   const pathname = usePathname()
   const router = useRouter()
   const { theme, setTheme } = useTheme()
@@ -48,10 +50,10 @@ export default function Header({ isLoading = false, showDuringLoading = false })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
+      handleSearch(searchQuery)
     }
   }
 
@@ -145,20 +147,7 @@ export default function Header({ isLoading = false, showDuringLoading = false })
           </div>
 
           <div className="flex items-center space-x-4">
-            <form onSubmit={handleSearch} className="hidden md:flex relative">
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="w-[180px] h-8 rounded-none border-border bg-transparent"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0 h-8 w-8">
-                <Search className="h-4 w-4" />
-                <span className="sr-only">Search</span>
-              </Button>
-            </form>
-
+            <SearchBar className="hidden md:block" />
             <ModeToggle />
 
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsOpen(true)} title="Menu">
@@ -194,19 +183,7 @@ export default function Header({ isLoading = false, showDuringLoading = false })
                 </Button>
               </div>
 
-              <form onSubmit={handleSearch} className="mb-6 flex">
-                <Input
-                  type="search"
-                  placeholder="Search..."
-                  className="flex-1 rounded-none border-border bg-background/10"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Button type="submit" variant="ghost" className="rounded-none border border-border border-l-0">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
-              </form>
+              <SearchBar className="mb-6" />
 
               <nav className="flex flex-col space-y-6 py-8">
                 {mainNavItems.map((item) =>
