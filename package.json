@@ -1,5 +1,5 @@
 {
-  "name": "my-v0-project",
+  "name": "rypto",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -60,12 +60,10 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
-    "zod": "^3.24.1",
-    "color-thief": "^2.4.0",
-    "colorthief": "^2.3.2"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^20",
     "@types/react": "^18.2.67",
     "@types/react-dom": "^18.2.22",
     "postcss": "^8",

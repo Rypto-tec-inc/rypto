@@ -1,0 +1,7 @@
+# Ignore TypeScript errors
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Ignore build errors
+.next
+node_modules 
