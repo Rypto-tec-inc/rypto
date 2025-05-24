@@ -22,6 +22,20 @@ const nextConfig = {
       'plus.unsplash.com',
       'utfs.io'
     ],
+    unoptimized: true
+  },
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      }
+    }
+    return config
   }
 }
 

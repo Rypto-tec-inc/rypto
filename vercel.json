@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "functions": {
+    "api/gallery.js": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  }
+} 

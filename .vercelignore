@@ -35,5 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Large files
+public/gallary/orange_gsm
+public/gallary/zig
+
 # Ignore build errors
 .git 
