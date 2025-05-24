@@ -36,6 +36,14 @@ const nextConfig = {
       }
     }
     return config
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/gallary/:path*',
+        destination: '/static/:path*',
+      },
+    ]
   }
 }
 
