@@ -139,12 +139,12 @@ export default function SearchPage() {
         {isSearching ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
+              </div>
         ) : searchResults.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground mb-4">No results found</p>
             <Button onClick={() => router.push('/')}>Return Home</Button>
-          </div>
+            </div>
         ) : (
           <div className="grid gap-6">
             {searchResults.map((result) => (
@@ -166,18 +166,18 @@ export default function SearchPage() {
                         <Badge className="capitalize flex items-center gap-1">
                           {getTypeIcon(result.type)}
                           {getTypeLabel(result.type)}
-                        </Badge>
-                      </div>
+                  </Badge>
+              </div>
                       {result.relevance > 0.7 && (
                         <div className="absolute top-2 left-2">
                           <Badge variant="secondary" className="bg-primary/20 text-primary">
                             Best Match
                           </Badge>
-                        </div>
-                      )}
+            </div>
+          )}
                       <ImageMatchBadge matches={result.matches} />
-                    </div>
-                  )}
+          </div>
+        )}
                   <div className={`p-4 ${result.image ? 'w-2/3' : 'w-full'}`}>
                     <div className="flex items-center gap-2 mb-2">
                       {!result.image && (
@@ -242,8 +242,8 @@ export default function SearchPage() {
                               matches={result.matches.filter(m => m.field === 'role')} 
                             />
                           </span>
-                        </div>
-                      </div>
+                  </div>
+                  </div>
                     )}
                     {result.matches.some(m => m.field === 'category') && (
                       <div className="flex flex-wrap gap-1 mb-4">
@@ -253,18 +253,18 @@ export default function SearchPage() {
                             <Badge key={i} variant="outline" className="text-xs">
                               <HighlightedText text={match.text} matches={[match]} />
                             </Badge>
-                          ))}
-                      </div>
+              ))}
+            </div>
                     )}
                     <div className="flex items-center text-primary text-sm font-medium">
                       View {getTypeLabel(result.type)}
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </div>
+            </div>
                   </div>
                 </div>
-              </Link>
+                  </Link>
             ))}
-          </div>
+            </div>
         )}
       </div>
     </div>

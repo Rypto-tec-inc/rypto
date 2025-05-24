@@ -241,7 +241,7 @@ export default function GalleryPage() {
         const dominantColor = await getDominantColor(item.image);
         const adjustedColor = adjustColorForBackground(dominantColor);
         setBackgroundColor(adjustedColor);
-      } else {
+    } else {
         setBackgroundColor(''); // Reset background for videos
       }
       setSelectedItem(item);
@@ -270,7 +270,7 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen">
       {/* Background color transition */}
-      <motion.div
+          <motion.div
         className="fixed inset-0 transition-colors duration-500 pointer-events-none"
         style={{ backgroundColor: backgroundColor || "transparent" }}
         initial={{ opacity: 0 }}
@@ -284,19 +284,19 @@ export default function GalleryPage() {
             <h1 className="text-4xl font-bold">Gallery</h1>
             <p className="text-muted-foreground">
               Explore our collection of images and videos
-            </p>
-          </div>
+                </p>
+              </div>
 
           {/* Filters and View Toggle */}
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Input
-                placeholder="Search gallery..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                  <Input
+                    placeholder="Search gallery..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                 className="max-w-sm"
-              />
-              <select
+                  />
+                <select
                 value={selectedSection}
                 onChange={(e) => setSelectedSection(e.target.value)}
                 className="bg-background border border-input rounded-md px-3 py-2"
@@ -304,9 +304,9 @@ export default function GalleryPage() {
                 {sectionOptions.map(section => (
                   <option key={section} value={section}>
                     {section === "all" ? "All Sections" : section.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                  </option>
-                ))}
-              </select>
+                    </option>
+                  ))}
+                </select>
             </div>
             <div className="flex gap-2">
               <Button
@@ -324,7 +324,7 @@ export default function GalleryPage() {
                 <List className="h-4 w-4" />
               </Button>
             </div>
-          </div>
+              </div>
 
           {/* Gallery Sections */}
           {sections.map(section => (
@@ -335,9 +335,9 @@ export default function GalleryPage() {
                 : "space-y-4"
               }>
                 {getCurrentItems(section.items).map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className={viewMode === 'list' ? "flex gap-4" : ""}
@@ -358,11 +358,11 @@ export default function GalleryPage() {
                               className="w-full h-full object-cover"
                               preload="metadata"
                             />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="rounded-full bg-background/80 p-3">
-                                <Play className="h-6 w-6" />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="rounded-full bg-background/80 p-3">
+                                  <Play className="h-6 w-6" />
+                                </div>
                               </div>
-                            </div>
                           </>
                         ) : (
                           <Image
@@ -384,7 +384,7 @@ export default function GalleryPage() {
                             className="opacity-20"
                             unoptimized
                           />
-                        </div>
+                            </div>
                         {/* Category-specific Logo */}
                         {item.category.toLowerCase().includes('orange') && (
                           <div className="absolute bottom-2 left-2 pointer-events-none">
@@ -416,15 +416,15 @@ export default function GalleryPage() {
                         >
                           {item.category}
                         </Badge>
-                      </div>
+                                  </div>
 
                       <div className={`p-4 space-y-3 ${viewMode === 'list' ? "flex-1" : ""}`}>
-                        <div>
+                              <div>
                           <h3 className="font-medium">{item.title}</h3>
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                             {item.description}
                           </p>
-                        </div>
+                                    </div>
                         {/* Creator Info */}
                         {item.creator && (
                           <div className="flex items-center gap-2 pt-2 border-t">
@@ -464,7 +464,7 @@ export default function GalleryPage() {
                               <Heart 
                                 className={`h-4 w-4 ${likedItems.includes(item.id) ? 'fill-red-500 text-red-500' : ''}`}
                               />
-                            </Button>
+                                </Button>
                             <span className="text-sm text-muted-foreground">
                               {likedItems.includes(item.id) ? 'Liked' : 'Like'}
                             </span>
@@ -543,11 +543,11 @@ export default function GalleryPage() {
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
             </div>
           ))}
 
@@ -606,11 +606,11 @@ export default function GalleryPage() {
                         playsInline
                       />
                     ) : (
-                      <Image
+                  <Image
                         src={selectedItem.image}
                         alt={selectedItem.title}
-                        fill
-                        className="object-contain"
+                    fill
+                    className="object-contain"
                         unoptimized
                       />
                     )}
@@ -635,8 +635,8 @@ export default function GalleryPage() {
                           height={60}
                           className="opacity-90"
                           unoptimized
-                        />
-                      </div>
+                  />
+                </div>
                     )}
                     {selectedItem.category.toLowerCase().includes('zig') && (
                       <div className="absolute bottom-4 left-4 pointer-events-none">
@@ -648,12 +648,12 @@ export default function GalleryPage() {
                           className="opacity-90"
                           unoptimized
                         />
-                      </div>
-                    )}
+                </div>
+              )}
                   </div>
-                  <div className="mt-4 bg-background p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
+              <div className="mt-4 bg-background p-4">
+                <div className="flex justify-between items-start">
+                  <div>
                         <h2 className="text-xl font-medium">{selectedItem.title}</h2>
                         <p className="text-muted-foreground mt-2">
                           {selectedItem.description}
@@ -703,16 +703,16 @@ export default function GalleryPage() {
                         >
                           <X className="h-4 w-4" />
                         </Button>
-                      </div>
-                    </div>
+                  </div>
+                </div>
                     <Badge variant="secondary" className="mt-4">
                       {selectedItem.category}
                     </Badge>
                   </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
         </div>
       </div>
     </div>

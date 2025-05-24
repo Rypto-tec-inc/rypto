@@ -364,7 +364,7 @@ export default function Home() {
                     View Our Work
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
-                </Button>
+                    </Button>
               </div>
             </motion.div>
 
@@ -625,21 +625,21 @@ export default function Home() {
 
           <div className="grid gap-8 md:grid-cols-2">
             {/* Featured Project 1 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-            >
+              >
               <Card className="overflow-hidden">
                 <div className="relative aspect-video">
-                  <Image
+                    <Image
                     src="/main/1312223.jpeg"
                     alt="Project 1"
                     fill
                     className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-6">
+                    />
+                  </div>
+                  <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">E-commerce Platform</h3>
                   <p className="text-muted-foreground mb-4">
                     A modern e-commerce solution with advanced features and seamless user experience.
@@ -666,7 +666,7 @@ export default function Home() {
                     fill
                     className="object-cover"
                   />
-                </div>
+                    </div>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">3D Animation Series</h3>
                   <p className="text-muted-foreground mb-4">
@@ -675,10 +675,10 @@ export default function Home() {
                   <div className="flex gap-2">
                     <UIBadge>3D Animation</UIBadge>
                     <UIBadge>Visual Effects</UIBadge>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
           </div>
 
           <div className="mt-8 text-center">

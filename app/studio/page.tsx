@@ -67,7 +67,7 @@ export default function StudioPage() {
 
   const filteredItems = items.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = !selectedCategory || item.category === selectedCategory
     return matchesSearch && matchesCategory
   })
@@ -136,8 +136,8 @@ export default function StudioPage() {
           <h1 className="text-4xl font-bold">Animation Studio</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Explore our collection of 3D animations, architectural visualizations, and interactive VR experiences.
-          </p>
-        </div>
+            </p>
+          </div>
 
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -154,7 +154,7 @@ export default function StudioPage() {
               onClick={() => setSelectedCategory(null)}
             >
               All
-            </Button>
+                        </Button>
             {categories.map(category => (
               <Button
                 key={category}
@@ -162,10 +162,10 @@ export default function StudioPage() {
                 onClick={() => setSelectedCategory(category)}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
-              </Button>
+                        </Button>
             ))}
-          </div>
-        </div>
+                      </div>
+                    </div>
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -194,12 +194,12 @@ export default function StudioPage() {
                       onClick={() => setSelectedItem(item)}
                     >
                       <Maximize2 className="h-6 w-6" />
-                    </Button>
+                        </Button>
                   </div>
                   <Badge className="absolute top-2 right-2">
                     {item.duration}
                   </Badge>
-                </div>
+                      </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between">
                     <div>
@@ -223,7 +223,7 @@ export default function StudioPage() {
               </Card>
             </motion.div>
           ))}
-        </div>
+              </div>
       </motion.div>
 
       {/* Lightbox */}
@@ -258,7 +258,7 @@ export default function StudioPage() {
                     onClick={() => handleDownload(selectedItem)}
                   >
                     <Download className="h-4 w-4" />
-                  </Button>
+                      </Button>
                   <Button
                     variant="secondary"
                     size="icon"
@@ -279,6 +279,6 @@ export default function StudioPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
   )
 }

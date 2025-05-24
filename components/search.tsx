@@ -5,7 +5,7 @@ import Image from "next/image"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Filter, Tag, Type, Category } from "lucide-react"
+import { X, Filter, Folder, Tag, Type } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface SearchResult {
@@ -180,7 +180,7 @@ export function Search() {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <Category className="h-4 w-4 text-muted-foreground" />
+                    <Folder className="h-4 w-4 text-muted-foreground" />
                     <select
                       value={selectedCategory || ''}
                       onChange={(e) => setSelectedCategory(e.target.value || null)}
