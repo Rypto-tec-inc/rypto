@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/dialog"
 import { getDominantColor, adjustColorForBackground } from "@/lib/color-utils"
 import Link from "next/link"
+import { GallerySection } from '@/components/gallery-section'
+import { LoadingSpinner } from '@/components/loading-spinner'
 
 type GalleryItem = {
   id: string
@@ -48,6 +50,11 @@ type GallerySection = {
   items: GalleryItem[]
 }
 
+interface GalleryData {
+  orange_gsm: string
+  zig: string
+}
+
 export default function GalleryPage() {
   const { toast } = useToast()
   const [sections, setSections] = useState<GallerySection[]>([])
@@ -61,6 +68,8 @@ export default function GalleryPage() {
   const itemsPerPage = 6
   const [backgroundColor, setBackgroundColor] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [galleryData, setGalleryData] = useState<GalleryData | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   // Load gallery sections
   useEffect(() => {
@@ -97,6 +106,23 @@ export default function GalleryPage() {
 
     loadGallerySections()
   }, [toast])
+
+  useEffect(() => {
+    const fetchGalleryData = async () => {
+      try {
+        const response = await fetch('/api/gallery')
+        if (!response.ok) {
+          throw new Error('Failed to fetch gallery data')
+        }
+        const data = await response.json()
+        setGalleryData(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+      }
+    }
+
+    fetchGalleryData()
+  }, [])
 
   // Get all items from all sections
   const allItems = sections.flatMap(section => section.items)
@@ -259,462 +285,54 @@ export default function GalleryPage() {
 
   if (loading) {
     return (
-      <div className="container py-12">
-        <div className="flex items-center justify-center h-[50vh]">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">Error: {error}</p>
+      </div>
+    )
+  }
+
+  if (!galleryData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>No gallery data available</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Background color transition */}
-          <motion.div
-        className="fixed inset-0 transition-colors duration-500 pointer-events-none"
-        style={{ backgroundColor: backgroundColor || "transparent" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: backgroundColor ? 0.1 : 0 }}
-      />
-
-      <div className="container py-12">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold">Gallery</h1>
-            <p className="text-muted-foreground">
-              Explore our collection of images and videos
-                </p>
-              </div>
-
-          {/* Filters and View Toggle */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                  <Input
-                    placeholder="Search gallery..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                className="max-w-sm"
-                  />
-                <select
-                value={selectedSection}
-                onChange={(e) => setSelectedSection(e.target.value)}
-                className="bg-background border border-input rounded-md px-3 py-2"
-              >
-                {sectionOptions.map(section => (
-                  <option key={section} value={section}>
-                    {section === "all" ? "All Sections" : section.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                    </option>
-                  ))}
-                </select>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="icon"
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="icon"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-              </div>
-
-          {/* Gallery Sections */}
-          {sections.map(section => (
-            <div key={section.path} className="space-y-6">
-              <h2 className="text-2xl font-semibold">{section.name}</h2>
-              <div className={viewMode === 'grid' 
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-                : "space-y-4"
-              }>
-                {getCurrentItems(section.items).map((item, index) => (
-                      <motion.div
-                        key={item.id}
-                        initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className={viewMode === 'list' ? "flex gap-4" : ""}
-                  >
-                    <Card 
-                      className={`overflow-hidden cursor-pointer hover:shadow-lg transition-shadow ${
-                        viewMode === 'list' ? "flex-1 flex" : ""
-                      }`}
-                      onClick={(e) => handleCardClick(e, item)}
-                    >
-                      <div className={`relative bg-muted ${
-                        viewMode === 'list' ? "w-48" : "aspect-[4/3]"
-                      }`}>
-                        {item.type === "video" ? (
-                          <>
-                            <video
-                              src={item.videoUrl}
-                              className="w-full h-full object-cover"
-                              preload="metadata"
-                            />
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="rounded-full bg-background/80 p-3">
-                                  <Play className="h-6 w-6" />
-                                </div>
-                              </div>
-                          </>
-                        ) : (
-                          <Image
-                            src={item.image}
-                            alt={item.title}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            unoptimized
-                          />
-                        )}
-                        {/* RYPT Logo Watermark */}
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <Image
-                            src="/gallary/logos/RYPTO_LOGO2-removebg-preview.png"
-                            alt="RYPT"
-                            width={120}
-                            height={120}
-                            className="opacity-20"
-                            unoptimized
-                          />
-                            </div>
-                        {/* Category-specific Logo */}
-                        {item.category.toLowerCase().includes('orange') && (
-                          <div className="absolute bottom-2 left-2 pointer-events-none">
-                            <Image
-                              src="/gallary/logos/orange.png"
-                              alt="Orange"
-                              width={40}
-                              height={40}
-                              className="opacity-80"
-                              unoptimized
-                            />
-                          </div>
-                        )}
-                        {item.category.toLowerCase().includes('zig') && (
-                          <div className="absolute bottom-2 left-2 pointer-events-none">
-                            <Image
-                              src="/gallary/logos/zig.png"
-                              alt="Zig"
-                              width={40}
-                              height={40}
-                              className="opacity-80"
-                              unoptimized
-                            />
-                          </div>
-                        )}
-                        <Badge 
-                          variant="secondary" 
-                          className="absolute top-2 right-2 bg-background/80 pointer-events-none"
-                        >
-                          {item.category}
-                        </Badge>
-                                  </div>
-
-                      <div className={`p-4 space-y-3 ${viewMode === 'list' ? "flex-1" : ""}`}>
-                              <div>
-                          <h3 className="font-medium">{item.title}</h3>
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            {item.description}
-                          </p>
-                                    </div>
-                        {/* Creator Info */}
-                        {item.creator && (
-                          <div className="flex items-center gap-2 pt-2 border-t">
-                            <Link href={item.creator.profileUrl} className="group">
-                              <div className="flex items-center gap-2">
-                                <Image
-                                  src={item.creator.image}
-                                  alt={item.creator.name}
-                                  width={24}
-                                  height={24}
-                                  className="rounded-full ring-2 ring-offset-2 ring-transparent group-hover:ring-primary transition-all"
-                                />
-                                <div className="flex flex-col text-sm">
-                                  <span className="font-medium group-hover:text-primary transition-colors">
-                                    {item.creator.name}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {item.creator.role}
-                                  </span>
-                                </div>
-                              </div>
-                            </Link>
-                          </div>
-                        )}
-                        <div className="flex items-center justify-between pt-2 border-t">
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleLike(item.id);
-                              }}
-                            >
-                              <Heart 
-                                className={`h-4 w-4 ${likedItems.includes(item.id) ? 'fill-red-500 text-red-500' : ''}`}
-                              />
-                                </Button>
-                            <span className="text-sm text-muted-foreground">
-                              {likedItems.includes(item.id) ? 'Liked' : 'Like'}
-                            </span>
-                          </div>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                }}
-                              >
-                                <Share2 className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent 
-                              align="end" 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
-                            >
-                              <DropdownMenuItem 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleShare(item);
-                                }}
-                              >
-                                <Link2 className="h-4 w-4 mr-2" />
-                                Copy Link
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleShare(item, 'facebook');
-                                }}
-                              >
-                                <Facebook className="h-4 w-4 mr-2" />
-                                Facebook
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleShare(item, 'twitter');
-                                }}
-                              >
-                                <Twitter className="h-4 w-4 mr-2" />
-                                Twitter
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleShare(item, 'linkedin');
-                                }}
-                              >
-                                <Linkedin className="h-4 w-4 mr-2" />
-                                LinkedIn
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleShare(item, 'whatsapp');
-                                }}
-                              >
-                                <MessageCircle className="h-4 w-4 mr-2" />
-                                WhatsApp
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                          </div>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-            </div>
-          ))}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center gap-2 mt-8">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? "default" : "outline"}
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-
-          {/* Lightbox */}
-          <AnimatePresence>
-            {selectedItem && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 bg-background/95 flex items-center justify-center p-4"
-                onClick={handleClose}
-              >
-                <div 
-                  className="max-w-4xl w-full"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="relative aspect-video bg-muted">
-                    {selectedItem.type === "video" ? (
-                      <video
-                        src={selectedItem.videoUrl}
-                        className="w-full h-full"
-                        controls
-                        autoPlay
-                        playsInline
-                      />
-                    ) : (
-                  <Image
-                        src={selectedItem.image}
-                        alt={selectedItem.title}
-                    fill
-                    className="object-contain"
-                        unoptimized
-                      />
-                    )}
-                    {/* RYPT Logo Watermark in Lightbox */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <Image
-                        src="/gallary/logos/RYPTO_LOGO2-removebg-preview.png"
-                        alt="RYPT"
-                        width={200}
-                        height={200}
-                        className="opacity-10"
-                        unoptimized
-                      />
-                    </div>
-                    {/* Category-specific Logo in Lightbox */}
-                    {selectedItem.category.toLowerCase().includes('orange') && (
-                      <div className="absolute bottom-4 left-4 pointer-events-none">
-                        <Image
-                          src="/gallary/logos/orange.png"
-                          alt="Orange"
-                          width={60}
-                          height={60}
-                          className="opacity-90"
-                          unoptimized
-                  />
-                </div>
-                    )}
-                    {selectedItem.category.toLowerCase().includes('zig') && (
-                      <div className="absolute bottom-4 left-4 pointer-events-none">
-                        <Image
-                          src="/gallary/logos/zig.png"
-                          alt="Zig"
-                          width={60}
-                          height={60}
-                          className="opacity-90"
-                          unoptimized
-                        />
-                </div>
-              )}
-                  </div>
-              <div className="mt-4 bg-background p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                        <h2 className="text-xl font-medium">{selectedItem.title}</h2>
-                        <p className="text-muted-foreground mt-2">
-                          {selectedItem.description}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDownload(selectedItem)}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <Share2 className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => handleShare(selectedItem)}>
-                              <Link2 className="h-4 w-4 mr-2" />
-                              Copy Link
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'facebook')}>
-                              <Facebook className="h-4 w-4 mr-2" />
-                              Facebook
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'twitter')}>
-                              <Twitter className="h-4 w-4 mr-2" />
-                              Twitter
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'linkedin')}>
-                              <Linkedin className="h-4 w-4 mr-2" />
-                              LinkedIn
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleShare(selectedItem, 'whatsapp')}>
-                              <MessageCircle className="h-4 w-4 mr-2" />
-                              WhatsApp
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={handleClose}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                  </div>
-                </div>
-                    <Badge variant="secondary" className="mt-4">
-                      {selectedItem.category}
-                    </Badge>
-                  </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-        </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="container mx-auto px-4 py-8"
+    >
+      <h1 className="text-4xl font-bold mb-8">Gallery</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <GallerySection
+          title="Orange GSM"
+          images={[
+            { src: `${galleryData.orange_gsm}/image1.jpg`, alt: 'Orange GSM 1' },
+            { src: `${galleryData.orange_gsm}/image2.jpg`, alt: 'Orange GSM 2' },
+            // Add more images as needed
+          ]}
+        />
+        <GallerySection
+          title="ZIG"
+          images={[
+            { src: `${galleryData.zig}/image1.jpg`, alt: 'ZIG 1' },
+            { src: `${galleryData.zig}/image2.jpg`, alt: 'ZIG 2' },
+            // Add more images as needed
+          ]}
+        />
       </div>
-    </div>
+    </motion.div>
   )
 }
