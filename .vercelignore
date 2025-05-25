@@ -36,29 +36,11 @@ yarn-error.log*
 next-env.d.ts
 
 # Large files - Gallery
-public/gallary/orange_gsm/**
 public/gallary/zig/**
 !public/gallary/logos/**
-!public/gallary/orange_gsm/index.html
 !public/gallary/zig/index.html
-!public/gallary/orange_gsm/max_it images/0001.png
-!public/gallary/orange_gsm/max_it images/0009.png
-!public/gallary/orange_gsm/max_it images/0019.png
-!public/gallary/orange_gsm/max_it images/0053.png
-!public/gallary/orange_gsm/max_it images/0061.png
-!public/gallary/orange_gsm/max_it images/0064.png
-!public/gallary/orange_gsm/max_it images/0071.png
-!public/gallary/orange_gsm/max_it images/0083.png
-!public/gallary/orange_gsm/max_it images/0091.png
-!public/gallary/orange_gsm/max_it images/0094.png
-!public/gallary/orange_gsm/max_it images/0097.png
-!public/gallary/orange_gsm/max_it images/0101.png
-!public/gallary/orange_gsm/max_it images/0104.png
-!public/gallary/orange_gsm/max_it images/0107.png
-!public/gallary/orange_gsm/max_it images/0110.png
-!public/gallary/orange_gsm/max_it images/0112.png
-!public/gallary/orange_gsm/max_it images/0157.png
-!public/gallary/orange_gsm/max_it images/0213.png
+!public/gallary/zig/zig_hoodie_design.png
+!public/gallary/zig/0009.png
 
 # Ignore build errors
 .git 

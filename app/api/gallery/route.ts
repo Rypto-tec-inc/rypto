@@ -6,7 +6,6 @@ export async function GET() {
   try {
     // Return the CDN URLs for the gallery images
     return NextResponse.json({
-      orange_gsm: `${GALLERY_CDN_URL}/orange_gsm`,
       zig: `${GALLERY_CDN_URL}/zig`
     })
   } catch (error) {

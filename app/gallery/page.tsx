@@ -51,7 +51,6 @@ type GallerySection = {
 }
 
 interface GalleryData {
-  orange_gsm: string
   zig: string
 }
 
@@ -315,20 +314,12 @@ export default function GalleryPage() {
       className="container mx-auto px-4 py-8"
     >
       <h1 className="text-4xl font-bold mb-8">Gallery</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <GallerySection
-          title="Orange GSM"
-          images={[
-            { src: `${galleryData.orange_gsm}/image1.jpg`, alt: 'Orange GSM 1' },
-            { src: `${galleryData.orange_gsm}/image2.jpg`, alt: 'Orange GSM 2' },
-            // Add more images as needed
-          ]}
-        />
+      <div className="grid grid-cols-1 gap-8">
         <GallerySection
           title="ZIG"
           images={[
-            { src: `${galleryData.zig}/image1.jpg`, alt: 'ZIG 1' },
-            { src: `${galleryData.zig}/image2.jpg`, alt: 'ZIG 2' },
+            { src: `${galleryData.zig}/zig_hoodie_design.png`, alt: 'ZIG Hoodie Design' },
+            { src: `${galleryData.zig}/0009.png`, alt: 'ZIG Design 1' },
             // Add more images as needed
           ]}
         />
