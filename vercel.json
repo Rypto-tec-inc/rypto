@@ -4,12 +4,6 @@
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "functions": {
-    "api/gallery.js": {
-      "memory": 3008,
-      "maxDuration": 60
-    }
-  },
   "routes": [
     {
       "src": "/gallary/(.*)",
@@ -24,6 +18,5 @@
       "src": "next.config.js",
       "use": "@vercel/next"
     }
-  ],
-  "ignoreCommand": "echo 'Skipping large files' && find public/gallary -type f -size +1M -delete"
+  ]
 } 
