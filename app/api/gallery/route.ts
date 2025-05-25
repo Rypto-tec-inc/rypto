@@ -1,12 +1,21 @@
 import { NextResponse } from 'next/server'
 
-const GALLERY_CDN_URL = process.env.GALLERY_CDN_URL || 'https://your-cdn-url.com'
-
 export async function GET() {
   try {
-    // Return the CDN URLs for the gallery images
+    // Return static paths for gallery images
     return NextResponse.json({
-      zig: `${GALLERY_CDN_URL}/zig`
+      zig: {
+        images: [
+          {
+            src: '/gallary/zig/zig_hoodie_design.png',
+            alt: 'ZIG Hoodie Design'
+          },
+          {
+            src: '/gallary/zig/0009.png',
+            alt: 'ZIG Design 1'
+          }
+        ]
+      }
     })
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch gallery data' }, { status: 500 })

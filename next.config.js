@@ -44,6 +44,29 @@ const nextConfig = {
         destination: '/static/:path*',
       },
     ]
+  },
+  // Add this to exclude large files from the build
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+  // Add this to optimize the build
+  webpack: (config, { dev, isServer }) => {
+    // Optimize images
+    config.module.rules.push({
+      test: /\.(png|jpe?g|gif|webp)$/i,
+      use: [
+        {
+          loader: 'file-loader',
+          options: {
+            publicPath: '/_next/static/images/',
+            outputPath: 'static/images/',
+            name: '[name].[hash].[ext]',
+          },
+        },
+      ],
+    })
+    return config
   }
 }
 
